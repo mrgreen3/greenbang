@@ -1,6 +1,6 @@
-## ArchBangx
+## ArchBang
 
-A Xfce4 based live archlinux iso.
+Archlinux  based live distro featuring Openbox Window Manager
 
 Currently Beta as still Work in Progress
 
@@ -8,10 +8,7 @@ Website: www.archbang.org
 
 ## Todo:
 
-Updated and move Guide
-Remove Icons from Desktop
+Update Guide
 Keybinds
-Theme?
 
-Consider this Read Only as working on a new version
 
