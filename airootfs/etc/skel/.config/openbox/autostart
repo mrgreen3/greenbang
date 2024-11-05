@@ -7,8 +7,11 @@
 # Set screen size more for own use in VB..
 #xrandr -s 1920x1080
 
+# Polkit agent
+/usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1 &
+
 # Apply background image..
-feh --bg-scale ~/Backgrounds/storm.jpg
+feh --bg-scale ~/Backgrounds/beach.jpg
 
 # Battery/AC applet
 cbatticon -n &
@@ -23,9 +26,9 @@ setxkbmap -layout "us" &
 #setxkbmap -option altwin:swap_alt_win
 
 # Start Panel
-(sleep 2 && startbar) &
+(sleep 2 && AB_startbar) &
 
 # Start Dunst then show a welcome note!
 dunst &
 
-(sleep 2 && notify-send "Use Super+h to view keyboard shortcuts") &
+(sleep 2 && notify-send "Keyboard Shortcuts press Alt+h") &

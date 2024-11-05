@@ -1,9 +1,9 @@
 # Add nano as default editor
 export EDITOR=vim
-export TERMINAL=xfce4-terminal
+export TERMINAL=alacritty
 export BROWSER=firefox
 
-# Add scripts path
+ #Add scripts path
 export PATH=$PATH:~/AB_Scripts
 
 alias ls='ls --color=auto'

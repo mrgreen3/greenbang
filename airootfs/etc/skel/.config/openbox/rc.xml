@@ -413,7 +413,7 @@
         <command>l3afpad</command>
       </action>
     </keybind>
-    <keybind key="W-h">
+    <keybind key="A-h">
       <action name="Execute">
         <command>AB_keybind</command>
       </action>
