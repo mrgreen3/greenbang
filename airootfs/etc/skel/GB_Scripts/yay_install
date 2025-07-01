@@ -1,0 +1,41 @@
+#!/usr//bin/env bash
+# Yay Aur helper install script.
+# Author: Mr Green with help from CoPilot
+
+# Function to install required dependencies
+install_dependencies() {
+    sudo pacman -Syu --needed --noconfirm git base-devel
+}
+
+# Function to clone, build, and install yay
+install_yay() {
+    git clone https://aur.archlinux.org/yay.git
+    cd yay || exit 1
+    makepkg -si --noconfirm
+}
+
+# Function to clean up after installation
+cleanup() {
+    cd ..
+    rm -rf yay
+}
+
+# Function to check if yay was successfully installed
+verify_installation() {
+    if command -v yay &> /dev/null; then
+        echo "yay is installed."
+    else
+        echo "yay installation failed."
+    fi
+}
+
+# Main script execution
+main() {
+    install_dependencies
+    install_yay
+    cleanup
+    verify_installation
+}
+
+# Run the main function
+main
