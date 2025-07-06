@@ -763,9 +763,9 @@ copy_progress() {
 }
 
 #}}}
-#INSTALL ARCHBANG {{{
-install_archbang(){
-  print_title "INSTALL ARCHBANG - www.archbang.org"
+#INSTALL GREENBANG {{{
+install_greenbang(){
+  print_title "INSTALL GreenBANG - www.greenbang.org"
   print_info "Installing please wait..."
   
   # copy source to new install, test copy over any changes made live to target drive
@@ -817,7 +817,7 @@ configure_fstab(){
 configure_hostname(){
   print_title "HOSTNAME - ${WIKI}/hostname"
   print_info "A host name is a unique name created to identify a machine on a network. Length is restricted to 63 characters."
-  read -p "Hostname [ex: archbang]: " host_name
+  read -p "Hostname [ex: greenbang]: " host_name
   echo "$host_name" > ${MNT}/etc/hostname
   arch_chroot "sed -i '/127.0.0.1/s/$/ '${host_name}'/' /etc/hosts"
   arch_chroot "sed -i '/::1/s/$/ '${host_name}'/' /etc/hosts"
@@ -1061,7 +1061,7 @@ pause_function
 #}}}
 #FINISH {{{
 finish(){
-  print_title "ARCHBANG INSTALL COMPLETED..."
+  print_title "GREENBANG INSTALL COMPLETED..."
   read_input_text "Reboot system"
   if [[ $OPTION == y ]]; then
     umount_partitions
@@ -1078,7 +1078,7 @@ check_boot_system
 
 while true
 do
-  print_title "GreenBang installer - www.archbang.org"
+  print_title "GreenBang installer - www.greenbang.org"
   echo " 1) $(mainmenu_item "${checklist[1]}" "Partition Scheme")"
   echo " 2) $(mainmenu_item "${checklist[2]}" "Install GreenBang")"
   echo " 3) $(mainmenu_item "${checklist[3]}" "Hostname")"
@@ -1103,7 +1103,7 @@ do
         checklist[1]=1
         ;;
       2)
-        install_archbang
+        install_greenbang
 		configure_fstab
         checklist[2]=1
         ;;

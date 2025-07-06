@@ -4,8 +4,8 @@ export TERMINAL=alacritty
 export BROWSER=firefox
 
 # Add scripts path safely
-if [[ ":$PATH:" != *":$HOME/AB_Scripts:"* ]]; then
-    export PATH="$PATH:$HOME/AB_Scripts"
+if [[ ":$PATH:" != *":$HOME/GB_Scripts:"* ]]; then
+    export PATH="$PATH:$HOME/GB_Scripts"
 fi
 
 alias ls='ls --color=auto'

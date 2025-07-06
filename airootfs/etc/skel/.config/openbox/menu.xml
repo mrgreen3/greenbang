@@ -27,7 +27,7 @@
 <!-- abinstall 5 -->
 <item label="Install">
    <action name="Execute">
-      <command>alacritty --title "GreenBang-Installer" -e sudo ~/AB_Scripts/abinstall</command>
+      <command>alacritty --title "GreenBang-Installer" -e sudo ~/GB_Scripts/gbinstall</command>
    </action>
 </item>
 <separator />

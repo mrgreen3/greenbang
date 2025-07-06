@@ -1,5 +1,7 @@
 # GreenBANG Project
 
-A live distro project using [GreenBang](https://github.com/mrgreen/greenbang)
+GreenBANG is a rebranding of Archbang, a live iso.
 
-Based on ArchBang [ArchBang](https://github.com/mrgreen/ArchBang)
+It is not affiliated with Arch Linux.
+
+

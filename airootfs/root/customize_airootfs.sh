@@ -62,7 +62,7 @@ done
 
 # Add live user
 useradd -m -p "" -G "wheel" -s /bin/bash -g users gblive 
-chown ablive /home/gblive
+chown gblive /home/gblive
 
 # Edit a .desktop file so it does not show in Openbox menu
 for app in bssh bvnc qv4l2 qvidcap avahi-discover conky gparted; do

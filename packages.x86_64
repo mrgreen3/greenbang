@@ -44,10 +44,6 @@ gvfs
 #gsimplecal
 glances
 
-# i3 window manager
-i3-wm
-i3status
-
 # Gtk, Icons, Theme
 gnome-themes-extra
 #arc-icon-theme
