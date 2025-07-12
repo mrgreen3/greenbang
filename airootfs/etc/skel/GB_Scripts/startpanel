@@ -7,6 +7,6 @@
 killall -q polybar
 
 # Launch Polybar
-polybar archbang 2>&1 | tee -a /tmp/polybar.log & disown
+polybar greenbang 2>&1 | tee -a /tmp/polybar.log & disown
 
 echo "Polybar launched..."

@@ -3,7 +3,7 @@
 # Profile modified for GreenBang 
 # by Mr Green [mrgreen@archbang.org]
 
-iso_name="greenbang-rc"
+iso_name="greenbang"
 iso_label="GREENBANG_$(date +%d%m)"
 iso_publisher="GreenBANG Project <https://www.archbang.org>"
 iso_application="GreenBang Project Live/Rescue Iso"

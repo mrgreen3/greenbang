@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# Abinstall GreenBANG installer
+# gbinstall GreenBANG installer
 # Modified by Mr Green mrgreen(at)archbang(dot)org
 # based on lilo fifo...scripts
 
@@ -941,13 +941,30 @@ configure_bootloader(){
             if [[ $LUKS -eq 1 ]]; then
               sed -i -e 's/GRUB_CMDLINE_LINUX="\(.\+\)"/GRUB_CMDLINE_LINUX="\1 cryptdevice=\/dev\/'"${LUKS_DISK}"':crypt"/g' -e 's/GRUB_CMDLINE_LINUX=""/GRUB_CMDLINE_LINUX="cryptdevice=\/dev\/'"${LUKS_DISK}"':crypt"/g' ${MNT}/etc/default/grub
             fi
+            print_info "Testing GRUB install outside chroot..."
             if [[ $UEFI -eq 1 ]]; then
-              arch_chroot "grub-install --target=x86_64-efi --efi-directory=${EFI_MNT} --bootloader-id=arch_grub --recheck"
+              grub-install --target=x86_64-efi \
+                --efi-directory=${EFI_MNT} \
+                --bootloader-id=arch_grub \
+                --boot-directory=${MNT}/boot \
+                --recheck \
+                2>&1 | tee -a /var/log/abinstall.log
             else
-              arch_chroot "grub-install --target=i386-pc --recheck --force ${BOOT_MNT}" # remove --debug
+              grub-install --target=i386-pc \
+                --boot-directory=${MNT}/boot \
+                --recheck --force "${BOOT_MNT}" \
+                2>&1 | tee -a /var/log/abinstall.log
             fi
+
+            if [[ $? -ne 0 ]]; then
+              print_warning "GRUB install (via external method) FAILED — check /var/log/abinstall.log"
+            else
+              print_info "GRUB install (via external method) completed successfully."
+            fi
+
             break
             ;;
+
           2)
             arch-chroot ${MNT}
             break
