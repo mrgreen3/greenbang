@@ -47,7 +47,7 @@
   </item>
 <item label="System">
     <action name="Execute">
-      <command>alacritty --title "System-Information" -e glances</command>
+      <command>alacritty --title "System-Information" -e btm</command>
     </action>
   </item>
  <item label="Panel">

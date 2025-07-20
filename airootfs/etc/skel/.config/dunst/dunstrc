@@ -8,7 +8,7 @@
   offset = (20,20)
   font = Dejavu Sans 10
   format = "%s"
-  frame_color = "#226030"
+  frame_color = "#334A3A"
   frame_width = 3
   background = "#0E0F06"  
   foreground = "#C2C3C0" 

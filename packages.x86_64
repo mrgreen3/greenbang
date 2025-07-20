@@ -30,7 +30,6 @@ conky
 lxappearance-gtk3
 lxrandr-gtk3
 rofi
-dmenu
 dunst
 #wmctrl
 #slop
@@ -42,7 +41,7 @@ xdg-user-dirs
 l3afpad
 gvfs
 #gsimplecal
-glances
+bottom
 
 # Gtk, Icons, Theme
 gnome-themes-extra

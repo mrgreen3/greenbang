@@ -7,7 +7,7 @@ configuration {
     font:                "Noto Sans Regular 10";
     show-icons:          true;
     icon-theme:          "Qogir";
-    display-drun:        "Apps";
+    display-drun:        "Search:";
     drun-display-format: "{name}";
     scroll-method:       0;
     disable-history:     false;
@@ -16,4 +16,4 @@ configuration {
 }
 
 /* set from within the following [global] */
-@theme "~/.config/rofi/gb-dark.rasi" 
+@theme "~/.config/rofi/gb-dark.rasi"

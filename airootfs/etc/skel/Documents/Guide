@@ -100,7 +100,7 @@ Refer to the instructions in the **Pacman Live** section above if needed.
 `pacman` will not work until keys are initialized. Run the following:
 
 ```
-ab-pacman-keys
+gb-pacman-keys
 
 ```
 
