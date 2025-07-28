@@ -8,7 +8,7 @@
 
     bg0:     #2D353B;
     bg1:     #2D353B;
-    fg0:     #FFFFFF;
+    fg0:     #C2C3C0;
 
     accent-color:     #334A3A;
     urgent-color:     #DBBC7F;

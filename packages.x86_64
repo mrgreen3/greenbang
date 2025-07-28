@@ -1,10 +1,8 @@
 ## Archive Tools
 zip
 unzip
-#unrar
 p7zip
 xz
-#lzop
 
 # Xorg
 xorg-server
@@ -27,12 +25,10 @@ archlinux-xdg-menu
 openbox
 polybar
 conky
-lxappearance-gtk3
+lxappearance-obconf-gtk3
 lxrandr-gtk3
 rofi
 dunst
-#wmctrl
-#slop
 udisks2
 xdotool
 cbatticon
@@ -40,15 +36,11 @@ laptop-detect
 xdg-user-dirs
 l3afpad
 gvfs
-#gsimplecal
 bottom
 
 # Gtk, Icons, Theme
 gnome-themes-extra
-#arc-icon-theme
-#arc-gtk-theme
 awesome-terminal-fonts
-#elementary-icon-theme
 
 # extra tools
 gparted
@@ -72,9 +64,6 @@ firefox
 scrot
 pacman-contrib
 tlp
-
-# Virtual Stuff
-virtualbox-guest-utils
 
 # Network Tools
 tcl
@@ -119,15 +108,13 @@ xf86-input-evdev
 xf86-input-synaptics
 xf86-input-void
 xf86-video-ati
-xf86-video-dummy
 xf86-video-fbdev
 xf86-video-intel
 xf86-video-nouveau
-#xf86-video-openchrome
 xf86-video-vesa
 xf86-video-voodoo
 xf86-video-amdgpu
-
+xf86-video-qxl
 
 # old base packages
 bash
@@ -135,7 +122,6 @@ bzip2
 coreutils
 cryptsetup
 device-mapper
-#dhclient
 diffutils
 e2fsprogs
 file
@@ -162,7 +148,6 @@ man-pages
 mdadm
 nano
 vi
-#netctl
 pacman
 pciutils
 perl
