@@ -193,6 +193,12 @@
       <action name="Execute">
 	  <command>alacritty</command>
       </action>
+  </keybind>
+
+    <keybind key="W-c">
+      <action name="Execute">
+	  <command>openbox --reconfigure</command>
+      </action>
     </keybind>
 
 	<keybind key="W-w">
@@ -258,6 +264,12 @@
 	<keybind key="A-t">
       <action name="Execute">
 	  <command>alacritty</command>
+      </action>
+     </keybind>
+
+    <keybind key="A-c">
+      <action name="Execute">
+	  <command>openbox --reconfigure</command>
       </action>
     </keybind>
 
