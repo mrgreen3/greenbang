@@ -8,7 +8,7 @@
 #xrandr -s 1920x1080 &
 
 # Apply background image..
-feh --bg-scale ~/Backgrounds/misty-trees.jpg
+feh --bg-scale ~/Backgrounds/swirl.png
 
 # Battery/AC applet
 cbatticon -n &
@@ -17,7 +17,7 @@ cbatticon -n &
 nm-applet &
 
 # Set keyboard layout..
-setxkbmap -layout "us" &
+setxkbmap -layout "gb" &
 
 # Start Panel
 (sleep 2 && startpanel) &

@@ -82,7 +82,7 @@ element selected {
 }
 
 element selected normal, element selected active {
-    background-color:   #334A3A;
+    background-color:   #004E62;
 }
 
 element selected urgent {

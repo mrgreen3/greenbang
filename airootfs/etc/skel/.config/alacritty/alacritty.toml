@@ -114,10 +114,8 @@ program = "/usr/bin/bash"
 [window]
 decorations = "full"
 dynamic_title = false
-
-[window.padding]
-x = 10
-y = 10
+padding.x = 10
+padding.y = 10
 
 [terminal]
 

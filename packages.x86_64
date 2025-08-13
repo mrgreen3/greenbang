@@ -37,6 +37,7 @@ xdg-user-dirs
 l3afpad
 gvfs
 bottom
+tealdeer
 
 # Gtk, Icons, Theme
 gnome-themes-extra
@@ -53,12 +54,11 @@ kbd
 
 # Extra Apps
 feh
-at
 openssh
 pkgfile
 ncdu
 arch-install-scripts
-wget
+curl
 firefox
 #netsurf
 scrot

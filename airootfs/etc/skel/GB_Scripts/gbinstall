@@ -777,11 +777,11 @@ install_greenbang(){
   # put live driver into new install
   cp /etc/X11/xorg.conf.d/20-gpudriver.conf ${MNT}/etc/X11/xorg.conf.d/20-gpudriver.conf &>/dev/null
 
-  # Remove abinstall from target device
-  rm -f ${MNT}/home/gblive/AB_Scripts/abinstall &> /dev/null
+  # Remove gbinstall from target device
+  rm -f ${MNT}/home/gblive/GB_Scripts/gbinstall &> /dev/null
 
   # Remove installer from root-menu   
-  sed -i '/<!-- abinstall 5 -->/,+5d' ${MNT}/home/gblive/.config/openbox/menu.xml
+  sed -i '/<!-- gbinstall 5 -->/,+5d' ${MNT}/home/gblive/.config/openbox/menu.xml
 
   # Remove Gparted from root-menu
   sed -i '/GParted/,+4d' ${MNT}/home/gblive/.config/openbox/menu.xml

@@ -24,7 +24,7 @@
       <command>l3afpad</command>
    </action>
 </item>
-<!-- abinstall 5 -->
+<!-- gbinstall 5 -->
 <item label="Install">
    <action name="Execute">
       <command>alacritty --title "GreenBang-Installer" -e sudo ~/GB_Scripts/gbinstall</command>
