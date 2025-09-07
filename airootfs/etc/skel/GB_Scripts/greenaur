@@ -1,0 +1,53 @@
+#!/bin/bash
+# greenaur - GreenBang AUR bootstrapper
+# Fetch & build AUR packages directly from Arch's GitHub mirror
+# Author: MrGreen [mrgreen@archbang.org]
+
+URL="https://github.com/archlinux/aur.git"
+PKG="$1"
+
+usage() {
+    echo "Usage: $0 <pkgname>"
+    echo "Example: $0 yay"
+}
+
+check_deps() {
+    local missing
+    missing=$(pacman -T git base-devel)
+    if [ -n "$missing" ]; then
+        echo "🔥 Missing required packages: $missing"
+        echo "⚡ Run: sudo pacman -S --needed $missing"
+        exit 1
+    fi
+}
+
+fetch_pkg() {
+    echo "⚙️  Fetching $PKG from AUR mirror..."
+    git clone --branch "$PKG" --single-branch "$URL" "$PKG" || {
+        echo "❌ Package '$PKG' not found."
+        exit 1
+    }
+}
+
+build_pkg() {
+    cd "$PKG" || exit 1
+    echo "⚒️  Building and installing $PKG ..."
+    if makepkg -si --noconfirm; then
+        cd ..
+        rm -rf "$PKG"
+        echo "✅ $PKG installed and build directory removed."
+    else
+        echo "❌ Build failed. Keeping $PKG directory for inspection."
+        exit 1
+    fi
+}
+
+main() {
+    [ -z "$PKG" ] && { usage; exit 1; }
+    check_deps
+    fetch_pkg
+    build_pkg
+}
+
+main
+

@@ -109,7 +109,7 @@ xf86-input-synaptics
 xf86-input-void
 xf86-video-ati
 xf86-video-fbdev
-xf86-video-intel
+#xf86-video-intel
 xf86-video-nouveau
 xf86-video-vesa
 xf86-video-voodoo

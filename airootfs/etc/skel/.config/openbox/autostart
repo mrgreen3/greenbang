@@ -17,7 +17,7 @@ cbatticon -n &
 nm-applet &
 
 # Set keyboard layout..
-setxkbmap -layout "gb" &
+setxkbmap -layout "us" &
 
 # Start Panel
 (sleep 2 && startpanel) &

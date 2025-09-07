@@ -3,7 +3,7 @@ general.import = ["~/.config/alacritty/themes/everforest_dark.toml",]
 general.ipc_socket = true
 
 [font]
-size = 9
+size = 7
 
 [font.bold]
 family = "monospace"
