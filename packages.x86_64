@@ -8,6 +8,7 @@ xz
 xorg-server
 xorg-xinit
 ttf-dejavu
+ttf-jetbrains-mono
 xorg-xrdb
 
 # Sound

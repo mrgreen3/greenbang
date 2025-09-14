@@ -8,15 +8,15 @@
 !! Titulo do menu
 menu.title.bg: flat solid
 !! menu title colour
-menu.title.bg.color: #004E62
+menu.title.bg.color: #3B4634
 !!menu.title.bg.colorTo: #181818
 menu.title.text.color: #ffffff
 menu.title.text.justify: center
 
 !! Itens do menu
 menu.items.bg: flat solid
-menu.items.bg.color: #202020
-menu.border.color: #202020
+menu.items.bg.color: #2B2B2B
+menu.border.color: #2B2B2B
 !!menu.items.bg.colorTo: #000000
 menu.items.text.color: #c2c3c0
 menu.items.justify: center
@@ -24,19 +24,19 @@ menu.items.disabled.text.color: #666666
 
 !! Item selecionado
 menu.items.active.bg: flat solid
-menu.items.active.bg.color: #004E62
+menu.items.active.bg.color: #3B4634
 !!menu.items.active.bg.colorTo: #181818
 menu.items.active.text.color: #ffffff
 
 !! Menu separator color
-menu.separator.color: #004E62
+menu.separator.color: #3B4634
 
 !! Titulo da janela
 window.active.title.bg: flat solid
-window.active.title.bg.color: #004E62
-window.inactive.border.color: #202020
+window.active.title.bg.color: #3B4634
+window.inactive.border.color: #2B2B2B
 window.inactive.title.bg: flat solid 
-window.inactive.title.bg.color: #202020
+window.inactive.title.bg.color: #2B2B2B
 !!window.inactive.title.bg.colorTo: #181818
 
 !! Parte interna da janela
@@ -48,15 +48,15 @@ window.inactive.label.text.color: #606060
 
 !! Parte debaixo da janela (meio)
 window.active.handle.bg: raised solid
-window.active.handle.bg.color: #202020
+window.active.handle.bg.color: #2B2B2B
 window.inactive.handle.bg: raised solid
-window.inactive.handle.bg.color: #202020
+window.inactive.handle.bg.color: #2B2B2B
 
 !! Parte debaixo da janela (pontas)
 window.active.grip.bg: raised solid
-window.active.grip.bg.color: #202020
+window.active.grip.bg.color: #2B2B2B
 window.inactive.grip.bg: raised solid
-window.inactive.grip.bg.color: #202020
+window.inactive.grip.bg.color: #2B2B2B
 
 !! Botoes da janela
 window.active.button.*.bg: parentrelative
@@ -64,14 +64,14 @@ window.active.button.*.image.color: #ffffff
 window.inactive.button.*.bg: parentrelative
 window.inactive.button.*.image.color: #666666
 
-border.color: #004E62
+border.color: #3B4634
 border.width: 2
 padding.width: 3
 padding.height: 3
 window.handle.width: 0
 window.client.padding.width: 0
 menu.overlap: 0
-menu.separator.color: #004E62
+menu.separator.color: #3B4634
 menu.separator.width: 3
 
 window.active.label.text.font:sans:bold:pixelsize=11:shadow=y

@@ -6,16 +6,16 @@ general.ipc_socket = true
 size = 7
 
 [font.bold]
-family = "monospace"
+family = "Jetbrains Mono"
 
 [font.bold_italic]
-family = "monospace"
+family = "Jetbrains Mono"
 
 [font.italic]
-family = "monospace"
+family = "Jetbrains Mono"
 
 [font.normal]
-family = "monospace"
+family = "Jetbrains Mono"
 
 [[keyboard.bindings]]
 action = "ScrollPageUp"

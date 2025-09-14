@@ -8,7 +8,7 @@
 #xrandr -s 1920x1080 &
 
 # Apply background image..
-feh --bg-scale ~/Backgrounds/swirl.png
+feh --bg-scale ~/Backgrounds/whitemountain.jpg &
 
 # Battery/AC applet
 cbatticon -n &

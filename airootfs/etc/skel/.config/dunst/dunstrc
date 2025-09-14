@@ -6,11 +6,11 @@
   width = 150
   origin = top-center
   offset = (20,20)
-  font = Dejavu Sans 7 
+  font = Jetbrains Mono 7 
   format = "%s"
-  frame_color = "#004E62"
+  frame_color = "#3B4634"
   frame_width = 3
-  background = "#004E62"  
+  background = "#3B4634"  
   foreground = "#C2C3C0" 
   padding = 5
   horizontal_padding = 5
