@@ -1,73 +1,71 @@
-#!/bin/sh
-set -e
+#!/bin/sh -e
 
-DESTDIR="$1"
-SCRIPTDIR="$(cd "$(dirname "$0")" && pwd)"
-AIROOTFS="$SCRIPTDIR/airootfs"
-
-if [ -z "$DESTDIR" ]; then
-    echo "ERROR: DESTDIR not provided"
-    exit 1
+HOSTNAME="$1"
+if [ -z "$HOSTNAME" ]; then
+	echo "usage: $0 hostname"
+	exit 1
 fi
 
-echo "Generating GreenBang apkovl overlay..."
+cleanup() {
+	rm -rf "$tmp"
+}
 
-# Copy airootfs to overlay
-if [ -d "$AIROOTFS" ]; then
-    echo "Copying overlay files from airootfs..."
-    cp -a "$AIROOTFS"/* "$DESTDIR"/ 2>&1 || echo "Warning: some files may not have copied"
-fi
+makefile() {
+	OWNER="$1"
+	PERMS="$2"
+	FILENAME="$3"
+	cat > "$FILENAME"
+	chown "$OWNER" "$FILENAME"
+	chmod "$PERMS" "$FILENAME"
+}
 
-# Ensure /etc/skel exists with proper structure
-echo "Setting up /etc/skel..."
-mkdir -p "$DESTDIR/etc/skel/.config/openbox"
+rc_add() {
+	mkdir -p "$tmp"/etc/runlevels/"$2"
+	ln -sf /etc/init.d/"$1" "$tmp"/etc/runlevels/"$2"/"$1"
+}
 
-# Create live user
-echo "Creating live user..."
-mkdir -p "$DESTDIR/etc/shadow.d"
+tmp="$(mktemp -d)"
+trap cleanup EXIT
 
-# Add alpine user to /etc/passwd
-if ! grep -q "^alpine:" "$DESTDIR/etc/passwd"; then
-    cat >> "$DESTDIR/etc/passwd" << 'PASSWD'
-alpine:x:1000:1000:Alpine User:/home/alpine:/bin/bash
-PASSWD
-fi
+mkdir -p "$tmp"/etc
+makefile root:root 0644 "$tmp"/etc/hostname <<EOF
+$HOSTNAME
+EOF
 
-# Add alpine user to /etc/group
-if ! grep -q "^alpine:" "$DESTDIR/etc/group"; then
-    cat >> "$DESTDIR/etc/group" << 'GROUP'
-alpine:x:1000:
-wheel:x:10:alpine
-GROUP
-fi
+mkdir -p "$tmp"/etc/network
+makefile root:root 0644 "$tmp"/etc/network/interfaces <<EOF
+auto lo
+iface lo inet loopback
 
-# Set password (encrypted: "alpine")
-if [ ! -f "$DESTDIR/etc/shadow.d/alpine" ]; then
-    cat > "$DESTDIR/etc/shadow.d/alpine" << 'SHADOW'
-alpine:$1$sORJx0BC$m4V2ggpvGwSMUTMEFQ7Ox1:19000:0:99999:7:::
-SHADOW
-fi
+auto eth0
+iface eth0 inet dhcp
+EOF
 
-# Create home directory
-echo "Creating home directory..."
-mkdir -p "$DESTDIR/home/alpine"
+mkdir -p "$tmp"/etc/apk
+makefile root:root 0644 "$tmp"/etc/apk/world <<EOF
+alpine-base
+xorg-server
+xinit
+xf86-input-libinput
+xf86-video-vesa
+openbox
+EOF
 
-# Copy /etc/skel contents to home
-if [ -d "$DESTDIR/etc/skel" ]; then
-    echo "Copying skel to home..."
-    cp -r "$DESTDIR/etc/skel"/* "$DESTDIR/home/alpine/" 2>/dev/null || true
-    cp -r "$DESTDIR/etc/skel"/.??* "$DESTDIR/home/alpine/" 2>/dev/null || true
-fi
+rc_add devfs sysinit
+rc_add dmesg sysinit
+rc_add mdev sysinit
+rc_add hwdrivers sysinit
+rc_add modloop sysinit
 
-# Fix ownership
-echo "Setting ownership..."
-chown -R 1000:1000 "$DESTDIR/home/alpine"
-chmod 755 "$DESTDIR/home/alpine"
+rc_add hwclock boot
+rc_add modules boot
+rc_add sysctl boot
+rc_add hostname boot
+rc_add bootmisc boot
+rc_add syslog boot
 
-# Enable getty on tty1 for live boot
-mkdir -p "$DESTDIR/etc/runlevels/default"
-if [ ! -L "$DESTDIR/etc/runlevels/default/agetty.tty1" ]; then
-    ln -s /etc/init.d/agetty "$DESTDIR/etc/runlevels/default/agetty.tty1"
-fi
+rc_add mount-ro shutdown
+rc_add killprocs shutdown
+rc_add savecache shutdown
 
-echo "Overlay generation complete"
+tar -c -C "$tmp" etc | gzip -9n > $HOSTNAME.apkovl.tar.gz

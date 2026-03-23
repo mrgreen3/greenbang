@@ -1,22 +1,21 @@
-#!/bin/sh
+profile_greenbang() {
+	title="GreenBang"
+	desc="Minimal Alpine Linux with Openbox desktop"
+	profile_base
+	profile_abbrev="GB"
+	image_ext="iso"
+	arch="x86_64"
+	output_format="iso"
+	kernel_flavors="lts"
+	kernel_addons=""
+	grub_mod="normal linux gzio part_gpt part_msdos"
+	efi_mod="search iso9660 search_fs_uuid search_label gzio normal linux gpt fat part_gpt part_msdos"
+	grub_cmdline="nomodeset"
+	xorg_devices="vesa"
+	apkovl="genapkovl-greenbang.sh"
 
-export iso_label="GreenBang"
-export iso_publisher="GreenBang"
-export iso_version="0.1"
-export output_filename="greenbang-${iso_version}-x86_64.iso"
-
-case "$ARCH" in
-	aarch64) export hostarch="aarch64" ;;
-	*) export hostarch="x86_64" ;;
-esac
-
-arch_abbr() {
-	case "$ARCH" in
-		aarch64) echo "aarch64" ;;
-		*) echo "x86_64" ;;
-	esac
-}
-
-profile_abbr() {
-	echo "greenbang"
+	# GreenBang packages (minimal)
+	apks="$apks openbox xterm"
+	apks="$apks xorg-server xinit xf86-input-libinput xf86-video-vesa"
+	apks="$apks bash sudo"
 }
