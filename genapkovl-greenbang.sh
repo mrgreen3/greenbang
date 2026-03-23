@@ -44,11 +44,14 @@ EOF
 mkdir -p "$tmp"/etc/apk
 makefile root:root 0644 "$tmp"/etc/apk/world <<EOF
 alpine-base
+bash
 xorg-server
 xinit
 xf86-input-libinput
 xf86-video-vesa
 openbox
+xterm
+sudo
 EOF
 
 rc_add devfs sysinit
@@ -63,6 +66,7 @@ rc_add sysctl boot
 rc_add hostname boot
 rc_add bootmisc boot
 rc_add syslog boot
+rc_add local boot
 
 rc_add mount-ro shutdown
 rc_add killprocs shutdown
