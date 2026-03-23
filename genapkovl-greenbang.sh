@@ -68,4 +68,17 @@ rc_add mount-ro shutdown
 rc_add killprocs shutdown
 rc_add savecache shutdown
 
+# Create local.d startup script for user setup
+mkdir -p "$tmp"/etc/local.d
+makefile root:root 0755 "$tmp"/etc/local.d/greenbang-setup.start <<'SCRIPT'
+#!/bin/sh
+# Create alpine user on first boot
+if ! id alpine >/dev/null 2>&1; then
+	adduser -D -u 1000 -h /home/alpine -s /bin/bash alpine
+	echo "alpine:alpine" | chpasswd
+	addgroup alpine wheel
+fi
+exit 0
+SCRIPT
+
 tar -c -C "$tmp" etc | gzip -9n > $HOSTNAME.apkovl.tar.gz
