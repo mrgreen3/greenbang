@@ -10,15 +10,6 @@ cleanup() {
 	rm -rf "$tmp"
 }
 
-makefile() {
-	OWNER="$1"
-	PERMS="$2"
-	FILENAME="$3"
-	cat > "$FILENAME"
-	chown "$OWNER" "$FILENAME"
-	chmod "$PERMS" "$FILENAME"
-}
-
 rc_add() {
 	mkdir -p "$tmp"/etc/runlevels/"$2"
 	ln -sf /etc/init.d/"$1" "$tmp"/etc/runlevels/"$2"/"$1"
@@ -27,13 +18,25 @@ rc_add() {
 tmp="$(mktemp -d)"
 trap cleanup EXIT
 
-mkdir -p "$tmp"/etc
-makefile root:root 0644 "$tmp"/etc/hostname <<EOF
-$HOSTNAME
-EOF
+# Get the script directory (where apkovl-files is located)
+SCRIPTDIR="$(cd "$(dirname "$0")" && pwd)"
+APKOVL_FILES="$SCRIPTDIR/apkovl-files"
 
+if [ ! -d "$APKOVL_FILES" ]; then
+	echo "ERROR: apkovl-files directory not found at $APKOVL_FILES"
+	exit 1
+fi
+
+# Copy overlay files from apkovl-files
+cp -r "$APKOVL_FILES"/etc "$tmp"/
+
+# Create hostname
+mkdir -p "$tmp"/etc
+echo "$HOSTNAME" > "$tmp"/etc/hostname
+
+# Create network config
 mkdir -p "$tmp"/etc/network
-makefile root:root 0644 "$tmp"/etc/network/interfaces <<EOF
+cat > "$tmp"/etc/network/interfaces <<EOF
 auto lo
 iface lo inet loopback
 
@@ -41,8 +44,9 @@ auto eth0
 iface eth0 inet dhcp
 EOF
 
+# Create package list
 mkdir -p "$tmp"/etc/apk
-makefile root:root 0644 "$tmp"/etc/apk/world <<EOF
+cat > "$tmp"/etc/apk/world <<EOF
 alpine-base
 bash
 xorg-server
@@ -51,9 +55,15 @@ xf86-input-libinput
 xf86-video-vesa
 openbox
 xterm
+lxterminal
 sudo
+mesa-dri-gallium
+eudev
+feh
+dhcpcd
 EOF
 
+# Setup runlevels
 rc_add devfs sysinit
 rc_add dmesg sysinit
 rc_add mdev sysinit
@@ -66,23 +76,12 @@ rc_add sysctl boot
 rc_add hostname boot
 rc_add bootmisc boot
 rc_add syslog boot
+rc_add dhcpcd boot
 rc_add local boot
 
 rc_add mount-ro shutdown
 rc_add killprocs shutdown
 rc_add savecache shutdown
 
-# Create local.d startup script for user setup
-mkdir -p "$tmp"/etc/local.d
-makefile root:root 0755 "$tmp"/etc/local.d/greenbang-setup.start <<'SCRIPT'
-#!/bin/sh
-# Create alpine user on first boot
-if ! id alpine >/dev/null 2>&1; then
-	adduser -D -u 1000 -h /home/alpine -s /bin/bash alpine
-	echo "alpine:alpine" | chpasswd
-	addgroup alpine wheel
-fi
-exit 0
-SCRIPT
-
+# Generate apkovl
 tar -c -C "$tmp" etc | gzip -9n > $HOSTNAME.apkovl.tar.gz

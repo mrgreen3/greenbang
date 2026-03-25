@@ -1,8 +1,0 @@
-#!/bin/sh
-# Openbox autostart script
-
-# Set background to dark green
-xsetroot -solid "#1b5e20"
-
-# Start X server components
-(sleep 1 && xterm) &

@@ -33,13 +33,13 @@ cd "$APORTS_SCRIPTS"
 
 echo "Running mkimage.sh..."
 sh mkimage.sh \
-    --tag edge \
+    --tag v3.23 \
     --outdir "$OUTDIR" \
     --workdir "$WORKDIR" \
     --arch x86_64 \
     --profile greenbang \
-    --repository https://mirrors.ircam.fr/pub/alpine/edge/main \
-    --repository https://mirrors.ircam.fr/pub/alpine/edge/community
+    --repository https://mirrors.ircam.fr/pub/alpine/v3.23/main \
+    --repository https://mirrors.ircam.fr/pub/alpine/v3.23/community
 
 # Find and display output ISO
 ISO_PATH=$(ls "$OUTDIR"/greenbang-*.iso 2>/dev/null | head -1)

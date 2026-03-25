@@ -15,7 +15,8 @@ profile_greenbang() {
 	apkovl="genapkovl-greenbang.sh"
 
 	# GreenBang packages (minimal)
-	apks="$apks openbox xterm"
+	apks="$apks openbox xterm lxterminal"
 	apks="$apks xorg-server xinit xf86-input-libinput xf86-video-vesa"
-	apks="$apks bash sudo"
+	apks="$apks bash sudo feh"
+	apks="$apks mesa-dri-gallium eudev dhcpcd"
 }
