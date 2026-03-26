@@ -1,0 +1,31 @@
+# Base system
+alpine-base
+linux-lts
+
+# Bootloader
+grub
+grub-efi
+
+# Xorg and graphics
+xorg-server
+xinit
+xf86-input-libinput
+xf86-video-vesa
+xsetroot
+
+# Desktop - Openbox
+openbox
+tint2
+
+# Terminal and tools
+lxterminal
+bash
+sudo
+
+# Utilities
+eudev
+
+# Networking
+networkmanager
+networkmanager-wifi
+wpa_supplicant

@@ -53,14 +53,15 @@ xorg-server
 xinit
 xf86-input-libinput
 xf86-video-vesa
+xsetroot
 openbox
-xterm
+tint2
 lxterminal
 sudo
-mesa-dri-gallium
 eudev
-feh
-dhcpcd
+networkmanager
+networkmanager-wifi
+wpa_supplicant
 EOF
 
 # Setup runlevels
@@ -76,8 +77,10 @@ rc_add sysctl boot
 rc_add hostname boot
 rc_add bootmisc boot
 rc_add syslog boot
-rc_add dhcpcd boot
 rc_add local boot
+
+rc_add networkmanager default
+rc_add dbus default
 
 rc_add mount-ro shutdown
 rc_add killprocs shutdown

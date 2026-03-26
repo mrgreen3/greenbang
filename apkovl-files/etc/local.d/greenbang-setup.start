@@ -1,12 +1,12 @@
 #!/bin/sh
-# Create alpine user on first boot
-if ! id alpine >/dev/null 2>&1; then
-	adduser -D -u 1000 -h /home/alpine -s /bin/bash alpine
-	echo "alpine:alpine" | chpasswd
-	addgroup alpine wheel
-	addgroup alpine video
-	addgroup alpine input
-	addgroup alpine tty
+# Create live user on first boot
+if ! id live >/dev/null 2>&1; then
+	adduser -D -u 1000 -h /home/live -s /bin/bash live
+	echo "live:live" | chpasswd
+	addgroup live wheel
+	addgroup live video
+	addgroup live input
+	addgroup live tty
 fi
 
 # Setup udev for device management
