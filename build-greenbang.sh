@@ -42,7 +42,7 @@ sh mkimage.sh \
     --repository https://mirrors.ircam.fr/pub/alpine/v3.23/community
 
 # Find and display output ISO
-ISO_PATH=$(ls "$OUTDIR"/greenbang-*.iso 2>/dev/null | head -1)
+ISO_PATH=$(ls "$OUTDIR"/alpine-greenbang-*.iso 2>/dev/null | head -1)
 if [ -n "$ISO_PATH" ]; then
     echo ""
     echo "✓ Build successful!"
