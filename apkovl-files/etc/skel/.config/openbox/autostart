@@ -1,5 +1,0 @@
-#!/bin/sh
-# Openbox autostart script
-
-xsetroot -solid '#003300' &
-tint2 &

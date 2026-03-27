@@ -49,19 +49,22 @@ mkdir -p "$tmp"/etc/apk
 cat > "$tmp"/etc/apk/world <<EOF
 alpine-base
 bash
-xorg-server
-xinit
-xf86-input-libinput
-xf86-video-vesa
-xsetroot
-openbox
-tint2
-lxterminal
-sudo
+labwc
+waybar
+foot
+wmenu
+swaybg
+mako
+grim
+doas
 eudev
 networkmanager
 networkmanager-wifi
+networkmanager-tui
+network-manager-applet
 wpa_supplicant
+polkit-gnome
+conky
 EOF
 
 # Setup runlevels

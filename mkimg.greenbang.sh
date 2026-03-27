@@ -18,7 +18,7 @@ section_kernels() {
 
 profile_greenbang() {
 	title="GreenBang"
-	desc="Alpine Linux with Openbox desktop and green theme"
+	desc="Alpine Linux with labwc Wayland desktop"
 	profile_base
 	profile_abbrev="GB"
 	image_ext="iso"
@@ -28,8 +28,6 @@ profile_greenbang() {
 	kernel_addons=""
 	grub_mod="normal linux gzio part_gpt part_msdos"
 	efi_mod="search iso9660 search_fs_uuid search_label gzio normal linux gpt fat part_gpt part_msdos"
-	grub_cmdline="nomodeset"
-	xorg_devices="vesa"
 	apkovl="genapkovl-greenbang.sh"
 	hostname="greenbang"
 	image_name="greenbang"

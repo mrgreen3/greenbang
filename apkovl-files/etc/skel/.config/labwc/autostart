@@ -1,0 +1,19 @@
+#!/bin/bash
+
+# Set wallpaper
+swaybg -i $HOME/Backgrounds/seafront.jpg -m fill &
+
+# Start waybar
+waybar &
+
+# Polkit authentication agent
+/usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1 &
+
+# Notification daemon
+mako &
+
+# Network manager applet
+nm-applet &
+
+# System monitoring
+conky &

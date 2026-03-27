@@ -1,0 +1,125 @@
+/* ---------- Lightwave Palette (from seafront.jpg) ---------- */
+@define-color bg #DBE0E9;
+@define-color surface0 #E8EDF5;
+@define-color surface1 #ABCDFA;
+@define-color fg #1a1a1a;
+@define-color subtext1 #666666;
+@define-color accent #ABCDFA;
+@define-color sel-fg #1a1a1a;
+@define-color red #E74C3C;
+@define-color green #27AE60;
+@define-color yellow #F39C12;
+@define-color blue #5CA0F0;
+
+/* ---------- Base styling ---------- */
+* {
+    border-radius: 0;
+}
+
+window#waybar {
+    background-color: rgba(80, 95, 130, 0.5);
+    color: @fg;
+    border: none;
+    padding: 5px 0;
+}
+
+/* ---------- Workspaces ---------- */
+#workspaces {
+    margin: 0;
+}
+
+#workspaces button {
+    padding: 0 5px;
+    margin: 0;
+    color: @fg;
+    background: transparent;
+    border: none;
+}
+
+#workspaces button.active {
+    color: @fg;
+    background-color: @accent;
+    padding: 0 5px;
+    margin: 0;
+    font-weight: bold;
+}
+
+#workspaces button.urgent {
+    color: #FFFFFF;
+    background-color: @red;
+}
+
+/* ---------- Window title ---------- */
+#window {
+    color: @fg;
+    padding: 0 10px;
+}
+
+/* ---------- Clock ---------- */
+#clock {
+    color: @fg;
+    background-color: @accent;
+    font-weight: normal;
+    padding: 4px 10px;
+    margin: 0;
+}
+
+#clock:hover {
+    opacity: 0.8;
+}
+
+/* ---------- Common section styling ---------- */
+#tray, #battery {
+    margin: 0;
+    padding: 0 5px;
+}
+
+/* ---------- System tray ---------- */
+#tray {
+    color: @fg;
+}
+
+/* ---------- Battery ---------- */
+#battery {
+    color: @fg;
+    font-size: 22px;
+}
+
+#battery.warning {
+    color: @yellow;
+}
+
+#battery.critical {
+    color: @red;
+}
+
+#battery.charging {
+    color: @green;
+}
+
+/* ---------- Taskbar ---------- */
+#taskbar {
+    margin: 0;
+    padding: 0 5px;
+}
+
+#taskbar button {
+    padding: 0 8px;
+    margin: 0;
+    color: @fg;
+    background: transparent;
+    border: none;
+}
+
+#taskbar button.active {
+    color: @fg;
+    background-color: @accent;
+}
+
+#taskbar button:hover {
+    opacity: 0.8;
+}
+
+#taskbar button:not(.active) {
+    color: #FFFFFF;
+}

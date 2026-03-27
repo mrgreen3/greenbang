@@ -6,26 +6,41 @@ linux-lts
 grub
 grub-efi
 
-# Xorg and graphics
-xorg-server
-xinit
-xf86-input-libinput
-xf86-video-vesa
-xsetroot
+# Wayland compositor
+labwc
 
-# Desktop - Openbox
-openbox
-tint2
+# Panel
+waybar
 
-# Terminal and tools
-lxterminal
-bash
-sudo
+# Terminal
+foot
+
+# Application launcher
+wmenu
+
+# Wallpaper
+swaybg
+
+# Notifications
+mako
+
+# Screenshot
+grim
 
 # Utilities
+bash
+doas
 eudev
 
 # Networking
 networkmanager
 networkmanager-wifi
+networkmanager-tui
+network-manager-applet
 wpa_supplicant
+
+# Polkit
+polkit-gnome
+
+# System monitor
+conky

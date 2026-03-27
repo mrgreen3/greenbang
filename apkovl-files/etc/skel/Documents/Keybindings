@@ -1,0 +1,37 @@
+GREENBANG KEYBINDINGS
+═════════════════════
+
+NOTE: Super = Windows Key
+
+
+APPLICATION SHORTCUTS
+─────────────────────
+
+Super + Return       Terminal
+Super + w            Web Browser
+Super + d            Application Menu
+Super + Space        Menu
+Super + Shift + Space  Client Menu
+
+
+WINDOW CONTROLS
+─────────────────────
+
+Super + q                  Close Window
+Alt + Tab                  Switch Windows
+Super + [1-4]              Switch Workspace
+Super + Shift + [1-4]      Send Window to Workspace
+Super + Control + ←/↑/→/↓  Snap to Edge
+Super + Control + c        Centre 80%
+Super + Control + m        Toggle Maximize
+Super + Control + d        Decorations
+Super + Control + b        Border
+
+
+OTHER
+─────────────────────
+
+Print                    Screenshot
+Super + Shift + s        Screenshot
+Super + Shift + r        Reconfigure
+Super + Alt + e          Exit

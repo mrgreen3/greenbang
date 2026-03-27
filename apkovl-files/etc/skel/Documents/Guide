@@ -1,0 +1,38 @@
+GreenBang Guide
+
+Welcome to GreenBang, a lightweight Alpine Linux live ISO with a Wayland desktop.
+
+---
+
+NETWORK
+
+- Wired (Ethernet) connections work automatically.
+- Wireless connections can be configured via the network icon in the panel:
+  - Left-click the icon
+  - Select your network from the list
+  - Enter your Wi-Fi password
+
+---
+
+PACKAGE MANAGEMENT
+
+GreenBang uses Alpine's apk package manager.
+
+Search for a package:
+  apk search <package-name>
+
+Install a package:
+  doas apk add <package-name>
+
+Update all packages:
+  doas apk upgrade
+
+---
+
+GETTING HELP
+
+Alpine Linux Wiki:
+  https://wiki.alpinelinux.org
+
+GreenBang:
+  https://greenbang.org

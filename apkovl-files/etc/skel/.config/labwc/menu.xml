@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<openbox_menu>
+
+<menu id="root-menu" label="GreenBang">
+
+  <item label="  Terminal">
+    <action name="Execute" command="foot"/>
+  </item>
+
+  <item label="  Browser">
+    <action name="Execute" command="firefox"/>
+  </item>
+
+  <separator/>
+
+  <menu id="exit_menu" label="Exit">
+    <item label="  Log Out">
+      <action name="Exit"/>
+    </item>
+    <item label="  Reboot">
+      <action name="Execute" command="reboot"/>
+    </item>
+    <item label="  Poweroff">
+      <action name="Execute" command="poweroff"/>
+    </item>
+  </menu>
+
+</menu>
+
+</openbox_menu>
