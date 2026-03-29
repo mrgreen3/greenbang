@@ -26,8 +26,6 @@ profile_greenbang() {
 	output_format="iso"
 	kernel_flavors="lts"
 	kernel_addons=""
-	grub_mod="normal linux gzio part_gpt part_msdos"
-	efi_mod="search iso9660 search_fs_uuid search_label gzio normal linux gpt fat part_gpt part_msdos"
 	apkovl="genapkovl-greenbang.sh"
 	hostname="greenbang"
 	image_name="greenbang-beta"
