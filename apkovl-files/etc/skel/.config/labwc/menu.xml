@@ -3,24 +3,28 @@
 
 <menu id="root-menu" label="GreenBang">
 
-  <item label="  Terminal">
+  <item label="󰆍  Terminal">
     <action name="Execute" command="foot"/>
   </item>
 
-  <item label="  Browser">
+  <item label="󰈹  Browser">
     <action name="Execute" command="firefox"/>
+  </item>
+
+  <item label="󰉋  Files">
+    <action name="Execute" command="pcmanfm"/>
   </item>
 
   <separator/>
 
   <menu id="exit_menu" label="Exit">
-    <item label="  Log Out">
+    <item label="󰍃  Log Out">
       <action name="Exit"/>
     </item>
-    <item label="  Reboot">
+    <item label="󰜉  Reboot">
       <action name="Execute" command="reboot"/>
     </item>
-    <item label="  Poweroff">
+    <item label="󰐥  Poweroff">
       <action name="Execute" command="poweroff"/>
     </item>
   </menu>

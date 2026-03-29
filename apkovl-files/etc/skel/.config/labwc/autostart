@@ -15,5 +15,5 @@ mako &
 # Network manager applet
 nm-applet &
 
-# System monitoring
+# System monitor
 conky &

@@ -8,6 +8,19 @@ grub-efi
 
 # Wayland compositor
 labwc
+xwayland
+
+# Seat management
+seatd
+seatd-openrc
+seatd-launch
+
+# D-Bus
+dbus-x11
+
+# Fonts
+font-dejavu
+font-nerd-fonts-symbols
 
 # Panel
 waybar
@@ -32,6 +45,13 @@ bash
 doas
 eudev
 
+# File manager
+pcmanfm
+adwaita-icon-theme
+
+# System monitor
+conky
+
 # Networking
 networkmanager
 networkmanager-wifi
@@ -42,5 +62,3 @@ wpa_supplicant
 # Polkit
 polkit-gnome
 
-# System monitor
-conky

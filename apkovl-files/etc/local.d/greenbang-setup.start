@@ -7,6 +7,8 @@ if ! id live >/dev/null 2>&1; then
 	addgroup live video
 	addgroup live input
 	addgroup live tty
+	addgroup live audio
+	addgroup live seat
 fi
 
 # Setup udev for device management

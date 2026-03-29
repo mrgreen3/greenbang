@@ -103,11 +103,11 @@
     <keybind key="W-t">
       <action name="Execute" command="foot"/>
     </keybind>
-    <keybind key="W-Return">
-      <action name="Execute" command="foot"/>
-    </keybind>
     <keybind key="W-w">
       <action name="Execute" command="firefox"/>
+    </keybind>
+    <keybind key="W-f">
+      <action name="Execute" command="pcmanfm"/>
     </keybind>
 
     <!-- Right-click menu -->

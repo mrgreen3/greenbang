@@ -50,6 +50,13 @@ cat > "$tmp"/etc/apk/world <<EOF
 alpine-base
 bash
 labwc
+xwayland
+seatd
+seatd-openrc
+seatd-launch
+dbus-x11
+font-dejavu
+font-nerd-fonts-symbols
 waybar
 foot
 wmenu
@@ -64,6 +71,8 @@ networkmanager-tui
 network-manager-applet
 wpa_supplicant
 polkit-gnome
+pcmanfm
+adwaita-icon-theme
 conky
 EOF
 
@@ -84,6 +93,7 @@ rc_add local boot
 
 rc_add networkmanager default
 rc_add dbus default
+rc_add seatd default
 
 rc_add mount-ro shutdown
 rc_add killprocs shutdown
