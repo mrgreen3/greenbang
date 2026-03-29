@@ -48,7 +48,7 @@ sh mkimage.sh \
     --repository https://mirrors.ircam.fr/pub/alpine/v3.23/community
 
 # Find and display output ISO
-ISO_PATH=$(ls "$OUTDIR"/greenbang-x86_64.iso 2>/dev/null | head -1)
+ISO_PATH=$(ls "$OUTDIR"/greenbang-beta-x86_64.iso 2>/dev/null | head -1)
 if [ -n "$ISO_PATH" ]; then
     echo ""
     echo "✓ Build successful!"
@@ -61,7 +61,3 @@ fi
 
 # Cleanup work directory
 rm -rf "$WORKDIR"
-
-echo ""
-echo "Next: Test with QEMU"
-echo "  qemu-system-x86_64 -cdrom $ISO_PATH -m 512 -nographic"

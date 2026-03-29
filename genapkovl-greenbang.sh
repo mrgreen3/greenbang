@@ -44,37 +44,10 @@ auto eth0
 iface eth0 inet dhcp
 EOF
 
-# Create package list
+# Create package list from packages.list
 mkdir -p "$tmp"/etc/apk
-cat > "$tmp"/etc/apk/world <<EOF
-alpine-base
-bash
-labwc
-xwayland
-seatd
-seatd-openrc
-seatd-launch
-dbus-x11
-font-dejavu
-font-nerd-fonts-symbols
-waybar
-foot
-wmenu
-swaybg
-mako
-grim
-doas
-eudev
-networkmanager
-networkmanager-wifi
-networkmanager-tui
-network-manager-applet
-wpa_supplicant
-polkit-gnome
-pcmanfm
-adwaita-icon-theme
-conky
-EOF
+grep -v '^#' "$SCRIPTDIR/packages.list" | grep -v '^$' \
+    | grep -v -E '^(linux-lts|grub|grub-efi)$' > "$tmp"/etc/apk/world
 
 # Setup runlevels
 rc_add devfs sysinit

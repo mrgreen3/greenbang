@@ -8,7 +8,6 @@ grub-efi
 
 # Wayland compositor
 labwc
-xwayland
 
 # Seat management
 seatd
@@ -40,6 +39,9 @@ mako
 # Screenshot
 grim
 
+# Display management
+wlr-randr
+
 # Utilities
 bash
 doas
@@ -61,4 +63,3 @@ wpa_supplicant
 
 # Polkit
 polkit-gnome
-

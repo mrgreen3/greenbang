@@ -2,7 +2,7 @@
 # Create live user on first boot
 if ! id live >/dev/null 2>&1; then
 	adduser -D -u 1000 -h /home/live -s /bin/bash live
-	echo "live:live" | chpasswd
+	echo live:live | chpasswd
 	addgroup live wheel
 	addgroup live video
 	addgroup live input
@@ -10,6 +10,11 @@ if ! id live >/dev/null 2>&1; then
 	addgroup live audio
 	addgroup live seat
 fi
+
+# Create runtime directory with correct ownership
+mkdir -p /run/user/1000
+chown 1000:1000 /run/user/1000
+chmod 700 /run/user/1000
 
 # Setup udev for device management
 setup-devd udev

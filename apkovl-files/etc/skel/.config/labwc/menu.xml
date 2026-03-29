@@ -17,15 +17,15 @@
 
   <separator/>
 
-  <menu id="exit_menu" label="Exit">
+  <menu id="exit_menu" label="  Exit">
     <item label="󰍃  Log Out">
       <action name="Exit"/>
     </item>
     <item label="󰜉  Reboot">
-      <action name="Execute" command="reboot"/>
+      <action name="Execute" command="doas reboot"/>
     </item>
     <item label="󰐥  Poweroff">
-      <action name="Execute" command="poweroff"/>
+      <action name="Execute" command="doas poweroff"/>
     </item>
   </menu>
 

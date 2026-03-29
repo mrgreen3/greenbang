@@ -30,8 +30,8 @@ profile_greenbang() {
 	efi_mod="search iso9660 search_fs_uuid search_label gzio normal linux gpt fat part_gpt part_msdos"
 	apkovl="genapkovl-greenbang.sh"
 	hostname="greenbang"
-	image_name="greenbang"
-	output_filename="greenbang-x86_64.iso"
+	image_name="greenbang-beta"
+	output_filename="greenbang-beta-x86_64.iso"
 
 	# Strip unwanted base packages
 	apks="$(echo $apks | sed 's/tiny-cloud-alpine//')"
