@@ -34,14 +34,11 @@ cp -r "$APKOVL_FILES"/etc "$tmp"/
 mkdir -p "$tmp"/etc
 echo "$HOSTNAME" > "$tmp"/etc/hostname
 
-# Create network config
+# Create network config (loopback only — NetworkManager handles everything else)
 mkdir -p "$tmp"/etc/network
 cat > "$tmp"/etc/network/interfaces <<EOF
 auto lo
 iface lo inet loopback
-
-auto eth0
-iface eth0 inet dhcp
 EOF
 
 # Create package list from packages.list
