@@ -1,0 +1,22 @@
+/* Match Lightwave labwc theme palette */
+
+/* Selection / highlight */
+row:selected, .view:selected, selection {
+  background-color: #ABCDFA;
+  color: #1a1a1a;
+}
+
+/* Header bar accent */
+headerbar {
+  background-color: #2d3440;
+}
+
+/* Window / view background */
+window, .background, .view {
+  background-color: #2d3440;
+}
+
+/* Sidebar */
+.sidebar, placessidebar {
+  background-color: #252b36;
+}
