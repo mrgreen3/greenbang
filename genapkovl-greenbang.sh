@@ -29,6 +29,9 @@ fi
 
 # Copy overlay files from apkovl-files
 cp -r "$APKOVL_FILES"/etc "$tmp"/
+if [ -d "$APKOVL_FILES/usr" ]; then
+	cp -r "$APKOVL_FILES"/usr "$tmp"/
+fi
 
 # Create hostname
 mkdir -p "$tmp"/etc
@@ -70,4 +73,4 @@ rc_add killprocs shutdown
 rc_add savecache shutdown
 
 # Generate apkovl
-tar -c -C "$tmp" etc | gzip -9n > $HOSTNAME.apkovl.tar.gz
+tar -c -C "$tmp" . | gzip -9n > $HOSTNAME.apkovl.tar.gz
