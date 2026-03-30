@@ -1,0 +1,67 @@
+#!/bin/sh
+# setup-greenbang — GreenBang installer
+# Wraps setup-alpine, then copies GreenBang configs to the installed system.
+
+# ── must run as root ──────────────────────────────────────────────────────────
+
+if [ "$(id -u)" -ne 0 ]; then
+    exec doas "$0" "$@"
+fi
+
+# ── welcome ───────────────────────────────────────────────────────────────────
+
+clear
+cat <<'EOF'
+
+  ██████╗ ██████╗ ███████╗███████╗███╗   ██╗██████╗  █████╗ ███╗   ██╗ ██████╗
+ ██╔════╝ ██╔══██╗██╔════╝██╔════╝████╗  ██║██╔══██╗██╔══██╗████╗  ██║██╔════╝
+ ██║  ███╗██████╔╝█████╗  █████╗  ██╔██╗ ██║██████╔╝███████║██╔██╗ ██║██║  ███╗
+ ██║   ██║██╔══██╗██╔══╝  ██╔══╝  ██║╚██╗██║██╔══██╗██╔══██║██║╚██╗██║██║   ██║
+ ╚██████╔╝██║  ██║███████╗███████╗██║ ╚████║██████╔╝██║  ██║██║ ╚████║╚██████╔╝
+  ╚═════╝ ╚═╝  ╚═╝╚══════╝╚══════╝╚═╝  ╚═══╝╚═════╝ ╚═╝  ╚═╝╚═╝  ╚═══╝ ╚═════╝
+
+  Install GreenBang to disk — Alpine base + labwc Wayland desktop
+
+  Network is already active (NetworkManager). When prompted for disk mode,
+  choose 'sys' to install to disk.
+
+EOF
+
+printf "Press Enter to begin..."
+read -r _
+
+# ── base install ──────────────────────────────────────────────────────────────
+
+setup-alpine
+
+# ── post-install: copy GreenBang configs ─────────────────────────────────────
+
+NEWROOT=/mnt
+
+# Only run post-install if setup-disk did a sys install
+if ! mountpoint -q "$NEWROOT" 2>/dev/null; then
+    echo "No system mounted at $NEWROOT — skipping GreenBang config copy."
+    exit 0
+fi
+
+echo ""
+echo "==> Copying GreenBang configuration to installed system..."
+
+# Remove live user creation script — not needed on installed system
+rm -f "$NEWROOT/etc/local.d/greenbang-setup.start"
+
+# skel (desktop configs land here for all new users)
+if [ -d /etc/skel ]; then
+    cp -a /etc/skel/. "$NEWROOT/etc/skel/"
+fi
+
+# doas
+if [ -f /etc/doas.d/doas.conf ]; then
+    install -D -m 0400 /etc/doas.d/doas.conf "$NEWROOT/etc/doas.d/doas.conf"
+fi
+
+
+echo "Done."
+echo ""
+echo "  Installation complete. Remove install media and reboot."
+echo ""
