@@ -5,6 +5,8 @@
 # Start labwc on TTY1
 if [ -z "$WAYLAND_DISPLAY" ] && [ -z "$DISPLAY" ] && [ "$(tty)" = "/dev/tty1" ]; then
     export XDG_RUNTIME_DIR=/run/user/$(id -u)
+    doas chown "$(id -u):$(id -g)" "$XDG_RUNTIME_DIR" 2>/dev/null
+    chmod 700 "$XDG_RUNTIME_DIR" 2>/dev/null || true
     export XDG_CURRENT_DESKTOP=labwc
     export XDG_SESSION_TYPE=wayland
     exec dbus-run-session labwc
