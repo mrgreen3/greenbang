@@ -9,12 +9,12 @@ if ! id live >/dev/null 2>&1; then
 	addgroup live tty
 	addgroup live audio
 	addgroup live seat
-
-	# Create runtime directory with correct ownership
-	mkdir -p /run/user/1000
-	chown 1000:1000 /run/user/1000
-	chmod 700 /run/user/1000
 fi
+
+# Create runtime directory — /run is tmpfs, must be done every boot
+mkdir -p /run/user/1000
+chown 1000:1000 /run/user/1000
+chmod 700 /run/user/1000
 
 # Setup udev for device management
 setup-devd udev
