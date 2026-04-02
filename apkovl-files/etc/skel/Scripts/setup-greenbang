@@ -35,9 +35,6 @@ read -r _
 setup-alpine
 
 # ── post-install: copy GreenBang configs ─────────────────────────────────────
-# TODO: Auto-add installed user to groups (wheel, audio, video, input) to match
-# live ISO behavior. Need to extract username from /etc/passwd on installed system
-# and run addgroup for each required group.
 
 NEWROOT=/mnt
 
@@ -46,6 +43,9 @@ if ! mountpoint -q "$NEWROOT" 2>/dev/null; then
     echo "No system mounted at $NEWROOT — skipping GreenBang config copy."
     exit 0
 fi
+
+# Extract installed username (first non-root, non-system user)
+INSTALLED_USER=$(chroot "$NEWROOT" sed -n '/^[^:]*:[^:]*:[1-9][0-9]*:/p' /etc/passwd | head -1 | cut -d: -f1)
 
 echo ""
 echo "==> Copying GreenBang configuration to installed system..."
@@ -76,7 +76,21 @@ chroot "$NEWROOT" rc-update add dbus default
 chroot "$NEWROOT" rc-update add networkmanager default
 chroot "$NEWROOT" rc-update add seatd default
 
-echo "Done."
+# Configure installed user with required group memberships
+if [ -n "$INSTALLED_USER" ]; then
+    echo "==> Adding user to groups..."
+    for group in wheel audio video input seat; do
+        chroot "$NEWROOT" addgroup "$INSTALLED_USER" "$group" 2>/dev/null || true
+    done
+fi
+
+# Installation summary
 echo ""
-echo "  Installation complete. Remove install media and reboot."
+echo "==> Installation Summary"
+echo "    User:     $INSTALLED_USER"
+echo "    Groups:   wheel, audio, video, input, seat"
+echo "    Services: dbus, networkmanager, seatd"
+echo ""
+echo "==> Installation complete."
+echo "    Remove install media and reboot to finish setup."
 echo ""
