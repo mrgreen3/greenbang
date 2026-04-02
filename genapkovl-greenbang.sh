@@ -49,6 +49,9 @@ mkdir -p "$tmp"/etc/apk
 grep -v '^#' "$SCRIPTDIR/packages.list" | grep -v '^$' \
     | grep -v -E '^(linux-lts|grub|grub-efi)$' > "$tmp"/etc/apk/world
 
+# Create /home directory for user creation at boot
+mkdir -p "$tmp"/home
+
 # Setup runlevels
 rc_add devfs sysinit
 rc_add dmesg sysinit
@@ -62,7 +65,7 @@ rc_add sysctl boot
 rc_add hostname boot
 rc_add bootmisc boot
 rc_add syslog boot
-rc_add local boot
+rc_add local default
 
 rc_add networkmanager default
 rc_add dbus default
@@ -71,6 +74,9 @@ rc_add seatd default
 rc_add mount-ro shutdown
 rc_add killprocs shutdown
 rc_add savecache shutdown
+
+# Ensure root directory is readable/traversable by all users
+chmod 755 "$tmp"
 
 # Generate apkovl
 tar -c -C "$tmp" . | gzip -9n > $HOSTNAME.apkovl.tar.gz

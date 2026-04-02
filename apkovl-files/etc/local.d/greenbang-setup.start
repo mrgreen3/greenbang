@@ -1,7 +1,11 @@
 #!/bin/sh
+# Ensure home directory exists with correct permissions before user creation
+mkdir -p /home
+chmod 755 /home
+
 # Create live user on first boot
 if ! id live >/dev/null 2>&1; then
-	adduser -D -u 1000 -h /home/live -s /bin/bash live
+	adduser -D -u 1000 -h /home/live -s /bin/sh live
 	echo live:live | chpasswd
 	addgroup live wheel
 	addgroup live video
@@ -9,7 +13,15 @@ if ! id live >/dev/null 2>&1; then
 	addgroup live tty
 	addgroup live audio
 	addgroup live seat
+	addgroup live plugdev
 fi
+
+# Create the home directory if it doesn't exist
+mkdir -p /home/live
+
+# Set correct ownership/permissions
+chown 1000:1000 /home/live
+chmod 755 /home/live
 
 # Setup udev for device management
 setup-devd udev

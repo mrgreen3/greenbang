@@ -43,7 +43,6 @@ grim
 wlr-randr
 
 # Utilities
-bash
 doas
 eudev
 
@@ -51,6 +50,9 @@ eudev
 pcmanfm
 adwaita-icon-theme
 adw-gtk3
+
+# Editor
+vim
 
 # System monitor
 conky
