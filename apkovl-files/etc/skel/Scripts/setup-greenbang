@@ -35,6 +35,9 @@ read -r _
 setup-alpine
 
 # ── post-install: copy GreenBang configs ─────────────────────────────────────
+# TODO: Auto-add installed user to groups (wheel, audio, video, input) to match
+# live ISO behavior. Need to extract username from /etc/passwd on installed system
+# and run addgroup for each required group.
 
 NEWROOT=/mnt
 
