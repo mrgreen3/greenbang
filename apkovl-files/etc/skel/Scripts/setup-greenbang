@@ -63,6 +63,12 @@ if [ -f /etc/doas.d/doas.conf ]; then
     install -D -m 0400 /etc/doas.d/doas.conf "$NEWROOT/etc/doas.d/doas.conf"
 fi
 
+# Install packages from live system world file
+if [ -f /etc/apk/world ]; then
+    echo "==> Installing packages from live system..."
+    cp /etc/apk/world "$NEWROOT/etc/apk/world"
+    chroot "$NEWROOT" apk add $(cat /etc/apk/world)
+fi
 
 echo "Done."
 echo ""
