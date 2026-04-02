@@ -70,6 +70,12 @@ if [ -f /etc/apk/world ]; then
     chroot "$NEWROOT" apk add $(cat /etc/apk/world)
 fi
 
+# Enable services to match live system
+echo "==> Enabling system services..."
+chroot "$NEWROOT" rc-update add dbus default
+chroot "$NEWROOT" rc-update add networkmanager default
+chroot "$NEWROOT" rc-update add seatd default
+
 echo "Done."
 echo ""
 echo "  Installation complete. Remove install media and reboot."
