@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 # GreenBang repository setup
 
 echo "Checking network connection..."
