@@ -43,7 +43,7 @@ grim
 wlr-randr
 
 # Utilities
-util-linux
+lsblk
 doas
 eudev
 
