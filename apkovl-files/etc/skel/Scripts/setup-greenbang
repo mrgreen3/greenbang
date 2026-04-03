@@ -119,13 +119,37 @@ setup_disk() {
     success "Target disk: $TARGET_DISK"
 
     # Call setup-disk with sys mode (install to disk)
-    # This will partition, format, install bootloader, and mount at /mnt
+    # setup-disk: partitions, formats, installs bootloader, then UNMOUNTS
     info "Running setup-disk (this will erase $TARGET_DISK)..."
-    setup-disk -m sys "$TARGET_DISK" || die "setup-disk failed"
 
-    # Verify /mnt is mounted
-    mountpoint -q "$NEWROOT" || die "/mnt is not mounted after setup-disk"
-    success "Disk setup complete, system mounted at /mnt"
+    if ! setup-disk -m sys "$TARGET_DISK"; then
+        die "setup-disk failed with exit code $?"
+    fi
+
+    success "setup-disk completed (created partitions and bootloader)"
+
+    # setup-disk unmounts /mnt after it's done, so we need to mount it ourselves
+    # Find the root partition (usually the last one on the disk)
+    info "Mounting root filesystem to $NEWROOT..."
+
+    # Determine the root partition (sys mode uses the last partition)
+    # For /dev/sda: /dev/sda1 (boot), /dev/sda2 (root)
+    # For /dev/nvme0n1: /dev/nvme0n1p1 (boot), /dev/nvme0n1p2 (root)
+    if [ -e "${TARGET_DISK}2" ]; then
+        ROOT_PART="${TARGET_DISK}2"
+    elif [ -e "${TARGET_DISK}p2" ]; then
+        ROOT_PART="${TARGET_DISK}p2"
+    else
+        die "Could not find root partition (expected ${TARGET_DISK}2 or ${TARGET_DISK}p2)"
+    fi
+
+    # Mount the root partition
+    mkdir -p "$NEWROOT"
+    if ! mount "$ROOT_PART" "$NEWROOT"; then
+        die "Failed to mount $ROOT_PART to $NEWROOT"
+    fi
+
+    success "Disk setup complete, mounted $ROOT_PART to /mnt"
 }
 
 # ──────────────────────────────────────────────────────────────────────────────
