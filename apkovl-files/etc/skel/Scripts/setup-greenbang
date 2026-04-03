@@ -1,17 +1,77 @@
 #!/bin/sh
-# setup-greenbang — GreenBang installer
-# Wraps setup-alpine, then copies GreenBang configs to the installed system.
+# setup-greenbang — Custom GreenBang installer for Alpine Linux
+# Installs GreenBang (labwc Wayland desktop) to disk without wrapping setup-alpine
+# Uses Alpine's component scripts directly for full control and transparency
 
-# ── must run as root ──────────────────────────────────────────────────────────
+set -e
 
-if [ "$(id -u)" -ne 0 ]; then
-    exec doas "$0" "$@"
-fi
+# ──────────────────────────────────────────────────────────────────────────────
+# CONFIGURATION
+# ──────────────────────────────────────────────────────────────────────────────
 
-# ── welcome ───────────────────────────────────────────────────────────────────
+INSTALLER_VERSION="1.0"
+NEWROOT="/mnt"
+LIBDIR="/usr/lib"
+LIBALPINE="$LIBDIR/libalpine.sh"
+SCRIPTDIR="$(cd "$(dirname "$0")" && pwd)"
+LIVEROOT="${LIVEROOT:-.}"
 
-clear
-cat <<'EOF'
+# Colors for output
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+BLUE='\033[0;34m'
+NC='\033[0m' # No Color
+
+# ──────────────────────────────────────────────────────────────────────────────
+# UTILITY FUNCTIONS
+# ──────────────────────────────────────────────────────────────────────────────
+
+info() {
+    printf "${BLUE}==>${NC} %s\n" "$@"
+}
+
+success() {
+    printf "${GREEN}✓${NC} %s\n" "$@"
+}
+
+error() {
+    printf "${RED}✗${NC} %s\n" "$@" >&2
+}
+
+warn() {
+    printf "${YELLOW}!${NC} %s\n" "$@"
+}
+
+die() {
+    error "$@"
+    exit 1
+}
+
+require_root() {
+    [ "$(id -u)" -eq 0 ] || die "This script must run as root"
+}
+
+# Source Alpine's utility library
+load_libalpine() {
+    [ -f "$LIBALPINE" ] || die "Cannot find libalpine.sh at $LIBALPINE"
+    . "$LIBALPINE"
+    success "Loaded Alpine utilities"
+}
+
+check_live_system() {
+    # Verify we're running from the live ISO
+    [ -f /etc/apk/world ] || die "Not running from live GreenBang ISO"
+    success "Running from live ISO"
+}
+
+# ──────────────────────────────────────────────────────────────────────────────
+# PHASE 1: WELCOME & VALIDATION
+# ──────────────────────────────────────────────────────────────────────────────
+
+show_welcome() {
+    clear
+    cat <<'EOF'
 
   ██████╗ ██████╗ ███████╗███████╗███╗   ██╗██████╗  █████╗ ███╗   ██╗ ██████╗
  ██╔════╝ ██╔══██╗██╔════╝██╔════╝████╗  ██║██╔══██╗██╔══██╗████╗  ██║██╔════╝
@@ -20,77 +80,319 @@ cat <<'EOF'
  ╚██████╔╝██║  ██║███████╗███████╗██║ ╚████║██████╔╝██║  ██║██║ ╚████║╚██████╔╝
   ╚═════╝ ╚═╝  ╚═╝╚══════╝╚══════╝╚═╝  ╚═══╝╚═════╝ ╚═╝  ╚═╝╚═╝  ╚═══╝ ╚═════╝
 
-  Install GreenBang to disk — Alpine base + labwc Wayland desktop
+  GreenBang Installer — Alpine Linux + labwc Wayland Desktop
+  Version $INSTALLER_VERSION
 
-  Network is already active (NetworkManager). When prompted for disk mode,
-  choose 'sys' to install to disk.
+  This installer will:
+  1. Partition and format your target disk
+  2. Install Alpine Linux base system
+  3. Install GreenBang desktop environment
+  4. Configure system services and user account
+
+  WARNING: This will erase all data on the target disk.
 
 EOF
+    printf "\nPress Enter to continue (Ctrl+C to cancel)..."
+    read -r _
+}
 
-printf "Press Enter to begin..."
-read -r _
+# ──────────────────────────────────────────────────────────────────────────────
+# PHASE 2: DISK SETUP
+# ──────────────────────────────────────────────────────────────────────────────
 
-# ── base install ──────────────────────────────────────────────────────────────
+setup_disk() {
+    info "Setting up disk and partitions..."
 
-setup-alpine
+    # Ask for target disk if not provided
+    if [ -z "$TARGET_DISK" ]; then
+        echo ""
+        echo "Available disks:"
+        lsblk -d -e7,11,251 -o NAME,SIZE,MODEL
+        echo ""
+        printf "Enter target disk (e.g., sda): "
+        read -r TARGET_DISK
+        [ -n "$TARGET_DISK" ] || die "No disk specified"
+        TARGET_DISK="/dev/$TARGET_DISK"
+    fi
 
-# ── post-install: copy GreenBang configs ─────────────────────────────────────
+    [ -b "$TARGET_DISK" ] || die "Invalid disk: $TARGET_DISK"
+    success "Target disk: $TARGET_DISK"
 
-NEWROOT=/mnt
+    # Call setup-disk with sys mode (install to disk)
+    # This will partition, format, install bootloader, and mount at /mnt
+    info "Running setup-disk (this will erase $TARGET_DISK)..."
+    setup-disk -m sys "$TARGET_DISK" || die "setup-disk failed"
 
-# Only run post-install if setup-disk did a sys install
-if ! mountpoint -q "$NEWROOT" 2>/dev/null; then
-    echo "No system mounted at $NEWROOT — skipping GreenBang config copy."
-    exit 0
-fi
+    # Verify /mnt is mounted
+    mountpoint -q "$NEWROOT" || die "/mnt is not mounted after setup-disk"
+    success "Disk setup complete, system mounted at /mnt"
+}
 
-# Extract installed username (first non-root, non-system user)
-INSTALLED_USER=$(chroot "$NEWROOT" sed -n '/^[^:]*:[^:]*:[1-9][0-9]*:/p' /etc/passwd | head -1 | cut -d: -f1)
+# ──────────────────────────────────────────────────────────────────────────────
+# PHASE 3: MIRROR & REPOSITORY CONFIGURATION
+# ──────────────────────────────────────────────────────────────────────────────
 
-echo ""
-echo "==> Copying GreenBang configuration to installed system..."
+setup_repositories() {
+    info "Configuring package repositories..."
 
-# Remove live user creation script — not needed on installed system
-rm -f "$NEWROOT/etc/local.d/greenbang-setup.start"
+    # Copy live system's repository config
+    [ -f /etc/apk/repositories ] || die "No /etc/apk/repositories in live system"
+    mkdir -p "$NEWROOT/etc/apk"
+    cp /etc/apk/repositories "$NEWROOT/etc/apk/repositories"
+    success "Repositories configured"
+}
 
-# skel (desktop configs land here for all new users)
-if [ -d /etc/skel ]; then
-    cp -a /etc/skel/. "$NEWROOT/etc/skel/"
-fi
+# ──────────────────────────────────────────────────────────────────────────────
+# PHASE 4: BASE SYSTEM INSTALLATION
+# ──────────────────────────────────────────────────────────────────────────────
 
-# doas
-if [ -f /etc/doas.d/doas.conf ]; then
-    install -D -m 0400 /etc/doas.d/doas.conf "$NEWROOT/etc/doas.d/doas.conf"
-fi
+install_base_packages() {
+    info "Installing base Alpine system to $NEWROOT..."
 
-# Install packages from live system world file
-if [ -f /etc/apk/world ]; then
-    echo "==> Installing packages from live system..."
-    cp /etc/apk/world "$NEWROOT/etc/apk/world"
-    chroot "$NEWROOT" apk add $(cat /etc/apk/world)
-fi
+    # apk add with --root installs to mounted root without chroot
+    # We use packages-world.list (subset of packages for disk install)
+    WORLD_FILE="${LIVEROOT}/etc/apk/world"
 
-# Enable services to match live system
-echo "==> Enabling system services..."
-chroot "$NEWROOT" rc-update add dbus default
-chroot "$NEWROOT" rc-update add networkmanager default
-chroot "$NEWROOT" rc-update add seatd default
+    if [ ! -f "$WORLD_FILE" ]; then
+        warn "Using live system packages from /etc/apk/world"
+        WORLD_FILE="/etc/apk/world"
+    fi
 
-# Configure installed user with required group memberships
-if [ -n "$INSTALLED_USER" ]; then
-    echo "==> Adding user to groups..."
+    # Install all packages from world file
+    apk add --root "$NEWROOT" --repository "$NEWROOT/etc/apk" \
+        alpine-base linux-lts grub grub-efi \
+        $(grep -v '^#' "$WORLD_FILE" | grep -v '^$') \
+        || die "Package installation failed"
+
+    success "Base system installed"
+}
+
+# ──────────────────────────────────────────────────────────────────────────────
+# PHASE 5: GREENBANG CONFIGURATION
+# ──────────────────────────────────────────────────────────────────────────────
+
+copy_greenbang_configs() {
+    info "Copying GreenBang configuration files..."
+
+    # Location of apkovl-files (config from live system)
+    APKOVL_SRC="${LIVEROOT}/etc/skel"
+
+    [ -d "$APKOVL_SRC" ] || die "GreenBang configs not found at $APKOVL_SRC"
+
+    # Copy entire skel directory (includes .config, .local, Documents, etc.)
+    cp -a "$APKOVL_SRC/." "$NEWROOT/etc/skel/" 2>/dev/null || {
+        error "Failed to copy some skel files (continuing...)"
+    }
+
+    # Copy doas configuration if it exists in live system
+    if [ -d /etc/doas.d ]; then
+        mkdir -p "$NEWROOT/etc/doas.d"
+        cp /etc/doas.d/doas.conf "$NEWROOT/etc/doas.d/doas.conf" 2>/dev/null || true
+        chmod 0400 "$NEWROOT/etc/doas.d/doas.conf"
+    fi
+
+    # Copy NetworkManager configs from live system
+    if [ -d /etc/NetworkManager ]; then
+        mkdir -p "$NEWROOT/etc/NetworkManager/conf.d"
+        cp /etc/NetworkManager/NetworkManager.conf "$NEWROOT/etc/NetworkManager/" 2>/dev/null || true
+        cp /etc/NetworkManager/conf.d/* "$NEWROOT/etc/NetworkManager/conf.d/" 2>/dev/null || true
+    fi
+
+    success "GreenBang configs copied"
+}
+
+# ──────────────────────────────────────────────────────────────────────────────
+# PHASE 6: USER SETUP
+# ──────────────────────────────────────────────────────────────────────────────
+
+create_admin_user() {
+    info "Creating admin user..."
+
+    # Prompt for admin username
+    printf "Admin username [admin]: "
+    read -r ADMIN_USER
+    ADMIN_USER="${ADMIN_USER:-admin}"
+
+    # Prompt for password (twice for confirmation)
+    printf "Admin password: "
+    read -r ADMIN_PASS
+    printf "Confirm password: "
+    read -r ADMIN_PASS_CONFIRM
+
+    [ "$ADMIN_PASS" = "$ADMIN_PASS_CONFIRM" ] || die "Passwords do not match"
+    [ -n "$ADMIN_PASS" ] || die "Password cannot be empty"
+
+    # Create user in chroot
+    chroot "$NEWROOT" addgroup -D -S "$ADMIN_USER" || {
+        warn "User already exists, skipping creation"
+    }
+
+    # Add to wheel (sudo-like) and other groups
     for group in wheel audio video input seat; do
-        chroot "$NEWROOT" addgroup "$INSTALLED_USER" "$group" 2>/dev/null || true
+        chroot "$NEWROOT" addgroup "$ADMIN_USER" "$group" 2>/dev/null || true
     done
-fi
 
-# Installation summary
-echo ""
-echo "==> Installation Summary"
-echo "    User:     $INSTALLED_USER"
-echo "    Groups:   wheel, audio, video, input, seat"
-echo "    Services: dbus, networkmanager, seatd"
-echo ""
-echo "==> Installation complete."
-echo "    Remove install media and reboot to finish setup."
-echo ""
+    # Set password
+    echo "$ADMIN_USER:$ADMIN_PASS" | chroot "$NEWROOT" chpasswd
+
+    # Create home directory if it doesn't exist
+    mkdir -p "$NEWROOT/home/$ADMIN_USER"
+
+    # Copy skel files to home
+    if [ -d "$NEWROOT/etc/skel" ]; then
+        cp -a "$NEWROOT/etc/skel/." "$NEWROOT/home/$ADMIN_USER/" 2>/dev/null || true
+    fi
+
+    # Fix ownership
+    chroot "$NEWROOT" chown -R "$ADMIN_USER:$ADMIN_USER" "/home/$ADMIN_USER"
+
+    success "Admin user created: $ADMIN_USER"
+}
+
+# ──────────────────────────────────────────────────────────────────────────────
+# PHASE 7: SYSTEM SERVICES & BOOTLOADER
+# ──────────────────────────────────────────────────────────────────────────────
+
+setup_services() {
+    info "Configuring system services..."
+
+    # Enable core services
+    chroot "$NEWROOT" rc-update add dbus default 2>/dev/null || true
+    chroot "$NEWROOT" rc-update add networkmanager default 2>/dev/null || true
+    chroot "$NEWROOT" rc-update add seatd default 2>/dev/null || true
+
+    success "Services configured"
+}
+
+setup_bootloader() {
+    info "Configuring bootloader..."
+
+    # Regenerate initramfs in chroot (required for custom kernel)
+    chroot "$NEWROOT" mkinitfs -k all || {
+        warn "mkinitfs had issues (this might be OK)"
+    }
+
+    # Update bootloader configuration
+    # Try GRUB first (for EFI), fall back to extlinux
+    if chroot "$NEWROOT" test -d /boot/grub 2>/dev/null; then
+        info "Updating GRUB bootloader..."
+        chroot "$NEWROOT" grub-mkconfig -o /boot/grub/grub.cfg || {
+            warn "GRUB config generation had issues"
+        }
+    else
+        info "Updating extlinux bootloader..."
+        chroot "$NEWROOT" update-extlinux || {
+            warn "extlinux update had issues"
+        }
+    fi
+
+    success "Bootloader configured"
+}
+
+# ──────────────────────────────────────────────────────────────────────────────
+# PHASE 8: FINAL SETUP & CLEANUP
+# ──────────────────────────────────────────────────────────────────────────────
+
+finalize_installation() {
+    info "Finalizing installation..."
+
+    # Set hostname if not already done by setup-disk
+    if [ -z "$HOSTNAME_SET" ]; then
+        printf "Hostname [greenbang]: "
+        read -r HOSTNAME
+        HOSTNAME="${HOSTNAME:-greenbang}"
+        echo "$HOSTNAME" > "$NEWROOT/etc/hostname"
+    fi
+
+    # Create minimal fstab if missing (setup-disk should create it)
+    if [ ! -f "$NEWROOT/etc/fstab" ]; then
+        warn "No fstab found, creating minimal one"
+        cat > "$NEWROOT/etc/fstab" <<EOF
+/dev/cdrom      /media/cdrom    iso9660 noauto,ro 0 0
+/dev/usbdisk    /media/usb      vfat    noauto 0 0
+tmpfs           /tmp            tmpfs   nosuid,nodev 0 0
+EOF
+    fi
+
+    success "Installation finalized"
+}
+
+unmount_filesystems() {
+    info "Unmounting filesystems..."
+
+    # Unmount in reverse order
+    umount -l "$NEWROOT/proc" 2>/dev/null || true
+    umount -l "$NEWROOT/sys" 2>/dev/null || true
+    umount -l "$NEWROOT/dev" 2>/dev/null || true
+
+    # Unmount root (with lazy unmount if busy)
+    sync
+    umount -l "$NEWROOT" 2>/dev/null || {
+        warn "Could not unmount $NEWROOT (may be in use)"
+    }
+
+    success "Filesystems unmounted"
+}
+
+# ──────────────────────────────────────────────────────────────────────────────
+# MAIN EXECUTION
+# ──────────────────────────────────────────────────────────────────────────────
+
+main() {
+    require_root
+    load_libalpine
+    check_live_system
+
+    show_welcome
+
+    info "Starting GreenBang installation..."
+
+    # Phase 2: Disk
+    setup_disk
+
+    # Phase 3: Repositories
+    setup_repositories
+
+    # Phase 4: Base system
+    install_base_packages
+
+    # Phase 5: GreenBang configs
+    copy_greenbang_configs
+
+    # Phase 6: User
+    create_admin_user
+
+    # Phase 7: Services & bootloader
+    setup_services
+    setup_bootloader
+
+    # Phase 8: Finalization
+    finalize_installation
+
+    # Phase 9: Cleanup
+    unmount_filesystems
+
+    # Summary
+    echo ""
+    success "Installation complete!"
+    echo ""
+    echo "Summary:"
+    echo "  Target disk: $TARGET_DISK"
+    echo "  Admin user: $ADMIN_USER"
+    echo "  Hostname: $HOSTNAME"
+    echo ""
+    echo "Next steps:"
+    echo "  1. Remove installation media"
+    echo "  2. Reboot the system"
+    echo "  3. Login with: $ADMIN_USER"
+    echo ""
+
+    printf "Ready to reboot? [y/N] "
+    read -r REBOOT
+    if [ "$REBOOT" = "y" ] || [ "$REBOOT" = "Y" ]; then
+        reboot
+    fi
+}
+
+# Run main function with error handling
+main "$@"
