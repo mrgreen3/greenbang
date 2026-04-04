@@ -1,0 +1,3 @@
+#!/bin/sh
+mkdir -p ~/Pictures
+grim ~/Pictures/screenshot-$(date +%s).png && notify-send 'Screenshot saved to ~/Pictures'

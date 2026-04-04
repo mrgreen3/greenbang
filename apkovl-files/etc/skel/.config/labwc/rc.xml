@@ -96,7 +96,7 @@
 
     <!-- Application launcher -->
     <keybind key="W-d">
-      <action name="Execute" command="~/.local/bin/wmenu-launcher"/>
+      <action name="Execute" command="~/Scripts/wmenu-launcher"/>
     </keybind>
 
     <!-- Applications -->
@@ -125,10 +125,10 @@
 
     <!-- Screenshot -->
     <keybind key="Print">
-      <action name="Execute" command="~/.local/bin/screenshot"/>
+      <action name="Execute" command="~/Scripts/screenshot"/>
     </keybind>
     <keybind key="W-S-s">
-      <action name="Execute" command="~/.local/bin/screenshot"/>
+      <action name="Execute" command="~/Scripts/screenshot"/>
     </keybind>
 
     <!-- Exit -->
