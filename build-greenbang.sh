@@ -7,12 +7,14 @@ set -e
 PROJECTDIR="$(cd "$(dirname "$0")" && pwd)"
 WORKDIR="/tmp/greenbang-work-$$"
 OUTDIR="$HOME/iso"
+VERSION="${VERSION:-0.1.0}"
 APORTS_SCRIPTS="${APORTS_SCRIPTS:-$HOME/aports/scripts}"
 
 echo "=== GreenBang Build ==="
 echo "Project: $PROJECTDIR"
 echo "Work dir: $WORKDIR"
 echo "Output: $OUTDIR"
+echo "Version: $VERSION"
 
 # Check if we're in a proper Alpine environment with mkimage
 if [ ! -f "$APORTS_SCRIPTS/mkimage.sh" ]; then
@@ -38,6 +40,7 @@ ln -sfn "$PROJECTDIR/apkovl-files" "$APORTS_SCRIPTS/apkovl-files"
 cd "$APORTS_SCRIPTS"
 
 echo "Running mkimage.sh..."
+export GB_VERSION="$VERSION"
 sh mkimage.sh \
     --tag v3.23 \
     --outdir "$OUTDIR" \
@@ -48,7 +51,7 @@ sh mkimage.sh \
     --repository https://mirrors.ircam.fr/pub/alpine/v3.23/community
 
 # Find and display output ISO
-ISO_PATH=$(ls "$OUTDIR"/greenbang-beta-x86_64.iso 2>/dev/null | head -1)
+ISO_PATH=$(ls "$OUTDIR"/greenbang-${VERSION}-x86_64.iso 2>/dev/null | head -1)
 if [ -n "$ISO_PATH" ]; then
     echo ""
     echo "✓ Build successful!"

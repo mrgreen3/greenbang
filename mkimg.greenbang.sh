@@ -28,8 +28,11 @@ profile_greenbang() {
 	kernel_addons=""
 	apkovl="genapkovl-greenbang.sh"
 	hostname="greenbang"
-	image_name="greenbang-beta"
-	output_filename="greenbang-beta-x86_64.iso"
+	
+	# Use version from environment, default to 0.1.0 if not set
+	local _version="${GB_VERSION:-0.1.0}"
+	image_name="greenbang-${_version}"
+	output_filename="greenbang-${_version}-x86_64.iso"
 
 	# Strip unwanted base packages
 	apks="$(echo $apks | sed 's/tiny-cloud-alpine//')"

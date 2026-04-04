@@ -1,0 +1,14 @@
+GreenBang - Alpine Linux Live ISO Distribution
+
+GreenBang is an Alpine Linux based live ISO distribution inspired by CrunchBang Linux.
+It features a minimal, keyboard-driven Wayland desktop environment built on:
+- labwc (Wayland compositor)
+- waybar (status bar)
+- foot (terminal)
+- rofi-wayland (application launcher)
+- NetworkManager (network management)
+
+For more information, visit: https://greenbang.org
+
+This project builds on Alpine Linux, which is licensed under the MIT License.
+See LICENSE file for details.

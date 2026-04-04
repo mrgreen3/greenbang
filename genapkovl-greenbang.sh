@@ -37,6 +37,21 @@ fi
 mkdir -p "$tmp"/etc
 echo "$HOSTNAME" > "$tmp"/etc/hostname
 
+# Create os-release file with version
+mkdir -p "$tmp"/etc
+cat > "$tmp"/etc/os-release <<EOF
+NAME="GreenBang"
+ID=greenbang
+ID_LIKE=alpine
+VERSION_ID="${GB_VERSION:-0.1.0}"
+PRETTY_NAME="GreenBang ${GB_VERSION:-0.1.0}"
+HOME_URL="https://greenbang.org"
+DOCUMENTATION_URL="https://greenbang.org"
+SUPPORT_URL="https://github.com/mrgreen3/greenbang"
+BUG_REPORT_URL="https://github.com/mrgreen3/greenbang/issues"
+PLATFORM_ID="linux"
+EOF
+
 # Create network config (loopback only — NetworkManager handles everything else)
 mkdir -p "$tmp"/etc/network
 cat > "$tmp"/etc/network/interfaces <<EOF
@@ -57,6 +72,7 @@ rc_add devfs sysinit
 rc_add dmesg sysinit
 rc_add mdev sysinit
 rc_add hwdrivers sysinit
+rc_add modloop sysinit
 rc_add modloop sysinit
 
 rc_add hwclock boot
