@@ -100,14 +100,20 @@
     </keybind>
 
     <!-- Applications -->
+    <keybind key="W-Return">
+      <action name="Execute" command="foot"/>
+    </keybind>
     <keybind key="W-t">
       <action name="Execute" command="foot"/>
     </keybind>
     <keybind key="W-w">
       <action name="Execute" command="firefox"/>
     </keybind>
+    <keybind key="W-e">
+      <action name="Execute" command="mousepad"/>
+    </keybind>
     <keybind key="W-f">
-      <action name="Execute" command="pcmanfm"/>
+      <action name="Execute" command="thunar"/>
     </keybind>
 
     <!-- Right-click menu -->

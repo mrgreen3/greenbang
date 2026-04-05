@@ -12,7 +12,11 @@
   </item>
 
   <item label="󰉋  Files">
-    <action name="Execute" command="pcmanfm"/>
+    <action name="Execute" command="thunar"/>
+  </item>
+
+  <item label="󰤑  Editor">
+    <action name="Execute" command="mousepad"/>
   </item>
 
   <separator/>

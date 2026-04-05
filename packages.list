@@ -46,15 +46,16 @@ wlr-randr
 util-linux
 doas
 eudev
-zram-init
 
 # File manager
-pcmanfm
+thunar
+thunar-volman
 adwaita-icon-theme
 adw-gtk3
 
 # Editor
 vim
+mousepad
 
 # System monitor
 conky
