@@ -46,6 +46,7 @@ wlr-randr
 util-linux
 doas
 eudev
+agetty
 
 # File manager
 thunar
