@@ -14,11 +14,45 @@ NETWORK
 
 ---
 
+RUNNING COMMANDS AS ROOT (doas)
+
+GreenBang uses 'doas' instead of 'sudo' for running commands with root privileges.
+
+Basic syntax:
+  doas <command>
+
+Enter your password when prompted. Your user account must be in the 'wheel' group
+(which happens automatically during installation).
+
+Examples:
+
+Install a package:
+  doas apk add <package-name>
+
+Update all packages:
+  doas apk upgrade
+
+Remove a package:
+  doas apk del <package-name>
+
+Edit a system file:
+  doas mousepad /etc/hostname
+
+Reboot the system:
+  doas reboot
+
+Power off:
+  doas poweroff
+
+---
+
 PACKAGE MANAGEMENT
 
-GreenBang uses Alpine's apk package manager.
+GreenBang uses Alpine's apk package manager. Note: Most package operations require
+root privileges, so you'll need to prefix commands with 'doas'. Searching for
+packages does not require root privileges.
 
-Search for a package:
+Search for a package (no root needed):
   apk search <package-name>
 
 Install a package:
@@ -26,6 +60,15 @@ Install a package:
 
 Update all packages:
   doas apk upgrade
+
+Remove a package:
+  doas apk del <package-name>
+
+List installed packages:
+  apk list --installed
+
+Check what's available to upgrade:
+  doas apk upgrade --dry-run
 
 ---
 

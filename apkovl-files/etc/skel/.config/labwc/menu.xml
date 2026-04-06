@@ -15,7 +15,7 @@
     <action name="Execute" command="thunar"/>
   </item>
 
-  <item label="󰤑  Editor">
+  <item label="󰲋  Editor">
     <action name="Execute" command="mousepad"/>
   </item>
 

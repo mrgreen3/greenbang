@@ -1,5 +1,8 @@
 #!/bin/sh
 
+# Configure VM display output (QEMU Virtual-1)
+wlr-randr | grep -q Virtual-1 && wlr-randr --output Virtual-1 --mode 1920x1080 &
+
 # Restart NetworkManager (ensure it's fully initialized)
 doas rc-service networkmanager restart &
 
