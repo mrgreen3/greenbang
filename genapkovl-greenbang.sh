@@ -86,7 +86,6 @@ rc_add local default
 rc_add dbus default
 rc_add networkmanager default
 rc_add seatd default
-rc_add pipewire default
 
 rc_add mount-ro shutdown
 rc_add killprocs shutdown
