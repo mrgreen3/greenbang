@@ -7,7 +7,7 @@ set -e
 PROJECTDIR="$(cd "$(dirname "$0")" && pwd)"
 WORKDIR="/tmp/greenbang-work-$$"
 OUTDIR="$HOME/iso"
-VERSION="${VERSION:-0.1.2-rc1}"
+VERSION="${VERSION:-0.1.3-rc1}"
 APORTS_SCRIPTS="${APORTS_SCRIPTS:-$HOME/aports/scripts}"
 
 echo "=== GreenBang Build ==="
