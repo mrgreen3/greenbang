@@ -27,6 +27,9 @@ waybar
 # Terminal
 foot
 
+# Web browser
+firefox
+
 # Application launcher
 wmenu
 
