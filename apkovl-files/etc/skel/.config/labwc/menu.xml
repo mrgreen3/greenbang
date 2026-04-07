@@ -3,20 +3,17 @@
 
 <menu id="root-menu" label="GreenBang">
 
+  <!-- Dynamic applications menu via pipemenu -->
+  <menu id="applications" label="󰀻  Applications" execute="$HOME/Scripts/obamenu"/>
+
+  <separator/>
+
   <item label="󰆍  Terminal">
     <action name="Execute" command="foot"/>
   </item>
 
-  <item label="󰈹  Browser">
-    <action name="Execute" command="firefox"/>
-  </item>
-
   <item label="󰉋  Files">
     <action name="Execute" command="thunar"/>
-  </item>
-
-  <item label="󰲋  Editor">
-    <action name="Execute" command="mousepad"/>
   </item>
 
   <separator/>
