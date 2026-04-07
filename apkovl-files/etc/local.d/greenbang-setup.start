@@ -32,4 +32,9 @@ mkdir -p /run/user/1000
 chown 1000:1000 /run/user/1000
 chmod 700 /run/user/1000
 
+# Create audio socket directory for WirePlumber/PipeWire
+mkdir -p /run/user/1000/pulse
+chown 1000:1000 /run/user/1000/pulse
+chmod 700 /run/user/1000/pulse
+
 exit 0

@@ -61,6 +61,11 @@ mousepad
 # System monitor
 conky
 
+# Audio
+pipewire
+wireplumber
+pipewire-alsa
+
 # Networking
 networkmanager
 networkmanager-wifi
