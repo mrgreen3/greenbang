@@ -31,7 +31,7 @@ rm -rf "$WORKDIR"
 mkdir -p "$WORKDIR"
 
 # Symlink GreenBang files into aports/scripts so mkimage can find them
-for f in mkimg.greenbang.sh genapkovl-greenbang.sh packages.list; do
+for f in mkimg.greenbang.sh genapkovl-greenbang.sh packages.list overlayfs-init.sh init-overlay-wrapper.sh; do
     ln -sf "$PROJECTDIR/$f" "$APORTS_SCRIPTS/$f"
 done
 ln -sfn "$PROJECTDIR/apkovl-files" "$APORTS_SCRIPTS/apkovl-files"
