@@ -1,8 +1,8 @@
 #!/bin/bash
 set -e
 
-# GreenBang build script with overlayfs support
-# Requires: Alpine aports at ~/aports
+# GreenBang build script with integrated overlayfs support
+# Properly handles apkovl-files directory for live user and configs
 
 PROJECTDIR="$(cd "$(dirname "$0")" && pwd)"
 WORKDIR="/tmp/greenbang-work-$$"
@@ -13,7 +13,7 @@ MKINITFS_ORIG="/tmp/initramfs-init.backup.$$"
 MKINITFS_FILE="/usr/share/mkinitfs/initramfs-init"
 CUSTOM_MKINITFS="$PROJECTDIR/mkinitfs/initramfs-init"
 
-echo "=== GreenBang Build with Overlayfs Support ==="
+echo "=== GreenBang Build with Integrated Overlayfs Support ==="
 echo "Project: $PROJECTDIR"
 echo "Work dir: $WORKDIR"
 echo "Output: $OUTDIR"
@@ -36,10 +36,15 @@ if [ ! -f "$APORTS_SCRIPTS/mkimage.sh" ]; then
     exit 1
 fi
 
-# Check if custom initramfs-init exists in project
+# Check if custom initramfs-init exists
 if [ ! -f "$CUSTOM_MKINITFS" ]; then
     echo "ERROR: $CUSTOM_MKINITFS not found"
-    echo "Run from project root where mkinitfs/initramfs-init exists"
+    exit 1
+fi
+
+# Check if apkovl-files exists
+if [ ! -d "$PROJECTDIR/apkovl-files" ]; then
+    echo "ERROR: $PROJECTDIR/apkovl-files not found"
     exit 1
 fi
 
@@ -50,18 +55,27 @@ mkdir -p "$OUTDIR"
 rm -rf "$WORKDIR"
 mkdir -p "$WORKDIR"
 
-# Symlink GreenBang files into aports/scripts so mkimage can find them
+echo ""
+echo "Setting up build files..."
+
+# Symlink build script files
 for f in mkimg.greenbang.sh genapkovl-greenbang.sh packages.list; do
     ln -sf "$PROJECTDIR/$f" "$APORTS_SCRIPTS/$f"
 done
-ln -sfn "$PROJECTDIR/apkovl-files" "$APORTS_SCRIPTS/apkovl-files"
 
-# Back up and replace initramfs-init with custom overlayfs version
+# CRITICAL: Copy apkovl-files instead of symlinking
+# This ensures genapkovl-greenbang.sh finds it correctly when resolving paths
+rm -rf "$APORTS_SCRIPTS/apkovl-files"
+cp -r "$PROJECTDIR/apkovl-files" "$APORTS_SCRIPTS/apkovl-files"
+
+echo "✓ Build files configured"
+
+# Apply overlayfs patch to initramfs-init
 echo ""
-echo "Patching initramfs-init for overlayfs support..."
+echo "Applying overlayfs patch to initramfs-init..."
 doas cp "$MKINITFS_FILE" "$MKINITFS_ORIG"
 doas cp "$CUSTOM_MKINITFS" "$MKINITFS_FILE"
-echo "✓ Custom overlayfs initramfs-init installed"
+echo "✓ Overlayfs-enabled initramfs-init installed"
 
 # Change to mkimage scripts directory (required for genapkovl-greenbang.sh lookup)
 cd "$APORTS_SCRIPTS"
@@ -87,7 +101,9 @@ if [ -n "$ISO_PATH" ]; then
     ls -lh "$ISO_PATH"
     echo ""
     echo "✓ Overlayfs support enabled!"
-    echo "✓ Boot with 512MB RAM: qemu-system-x86_64 -cdrom $ISO_PATH -m 512m -enable-kvm"
+    echo "✓ Live user and packages configured"
+    echo ""
+    echo "To test: qemu-system-x86_64 -cdrom $ISO_PATH -m 512m -enable-kvm"
 else
     echo "✗ ISO not found in $OUTDIR"
     exit 1
