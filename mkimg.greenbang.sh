@@ -57,3 +57,9 @@ profile_greenbang() {
 	_pkglist="$(grep -v '^#' "$SCRIPTDIR/packages.list" | grep -v '^$' | tr '\n' ' ')"
 	apks="$apks $_pkglist"
 }
+
+
+# Enable Alpine's native overlayfs tmpfs support
+# This adds overlaytmpfs=yes to the kernel boot parameters
+# The initramfs will automatically set up overlayfs with tmpfs upper layer
+kernel_cmdline="overlaytmpfs=yes"
