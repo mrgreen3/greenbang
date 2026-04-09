@@ -1,8 +1,6 @@
 #!/bin/sh
 
 # Override section_kernels to use selective firmware instead of the full linux-firmware meta-package.
-# The default pulls in all 111 sub-packages (~600MB uncompressed). We only need WiFi firmware.
-# linux-firmware-none satisfies the linux-firmware-any virtual dep with 0 bytes.
 section_kernels() {
 	local _f _a _pkgs
 	local _firmware="linux-firmware-none linux-firmware-brcm linux-firmware-ath10k linux-firmware-rtlwifi linux-firmware-rtw89"
@@ -48,6 +46,45 @@ profile_greenbang() {
 	SCRIPTDIR="$(cd "$(dirname "$0")" && pwd)"
 	_pkglist="$(grep -v '^#' "$SCRIPTDIR/packages.list" | grep -v '^$' | tr '\n' ' ')"
 	apks="$apks $_pkglist"
+}
 
-	# Enable Alpine native overlayfs with tmpfs
+# Override syslinux_cfg to add overlay module and overlaytmpfs=yes
+syslinux_cfg() {
+	cat > "$1"/boot/syslinux/syslinux.cfg <<- __EOF__
+		TIMEOUT 10
+		PROMPT 1
+		DEFAULT lts
+
+		LABEL lts
+		MENU LABEL Linux lts
+		KERNEL /boot/vmlinuz-lts
+		INITRD /boot/initramfs-lts
+		FDTDIR /boot/dtbs-lts
+		APPEND modules=loop,squashfs,sd-mod,usb-storage,overlay quiet overlaytmpfs=yes
+
+		LABEL lts-vga
+		MENU LABEL Linux lts (vga=791)
+		KERNEL /boot/vmlinuz-lts
+		INITRD /boot/initramfs-lts
+		FDTDIR /boot/dtbs-lts
+		APPEND modules=loop,squashfs,sd-mod,usb-storage,overlay quiet overlaytmpfs=yes vga=791
+	__EOF__
+}
+
+# Override grub_cfg to add overlay module and overlaytmpfs=yes
+grub_cfg() {
+	cat > "$1"/boot/grub/grub.cfg <<- __EOF__
+		set default=0
+		set timeout=5
+
+		menuentry "Alpine Linux" {
+		    linux /boot/vmlinuz-lts root=/dev/sr0 modules=loop,squashfs,sd-mod,usb-storage,overlay quiet overlaytmpfs=yes
+		    initrd /boot/initramfs-lts
+		}
+
+		menuentry "Alpine Linux (vga=791)" {
+		    linux /boot/vmlinuz-lts root=/dev/sr0 modules=loop,squashfs,sd-mod,usb-storage,overlay quiet overlaytmpfs=yes vga=791
+		    initrd /boot/initramfs-lts
+		}
+	__EOF__
 }
