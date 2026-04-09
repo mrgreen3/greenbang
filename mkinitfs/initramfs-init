@@ -877,14 +877,13 @@ fi
 overlay_mounted=0
 if [ -z "$KOPT_root" ] && [ "$KOPT_overlaytmpfs" = "yes" ] && grep -q "^overlay" /proc/modules 2>/dev/null; then
 	ebegin "Setting up diskless overlayfs root"
-	# Find ISO/squashfs mounted by bootloader at /media/cdrom or similar
-	overlay_lower=""
-	for mnt in /media/cdrom /media/usb /media/usb0 /media/*; do
-		if [ -d "$mnt" ] && [ -e "$mnt/boot/vmlinuz-lts" ] 2>/dev/null; then
-			overlay_lower="$mnt"
-			break
-		fi
-	done
+	# Use /media/cdrom where Alpine mounts the ISO
+	overlay_lower="/media/cdrom"
+	
+	# Verify it exists and has the kernel
+	if [ ! -d "$overlay_lower" ] || [ ! -e "$overlay_lower/boot/vmlinuz-lts" ]; then
+		overlay_lower=""
+	fi
 	
 	if [ -n "$overlay_lower" ]; then
 		# Create overlay work directories
