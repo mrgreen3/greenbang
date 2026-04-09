@@ -93,10 +93,6 @@ if [ -f "$SCRIPTDIR/init-overlay-wrapper.sh" ]; then
 fi
 
 # ============================================================================
-# Copy overlayfs check script (for runtime verification)
-if [ -f "$SCRIPTDIR/check-overlayfs.sh" ]; then
-	makefile root:root 0755 "$tmp"/usr/local/bin/check-overlayfs < "$SCRIPTDIR/check-overlayfs.sh"
-fi
 # Setup runlevels
 # ============================================================================
 
