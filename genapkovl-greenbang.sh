@@ -15,6 +15,16 @@ rc_add() {
 	ln -sf /etc/init.d/"$1" "$tmp"/etc/runlevels/"$2"/"$1"
 }
 
+makefile() {
+	OWNER="$1"
+	PERMS="$2"
+	FILENAME="$3"
+	mkdir -p "$(dirname "$FILENAME")"
+	cat > "$FILENAME"
+	chmod "$PERMS" "$FILENAME"
+	chown "$OWNER" "$FILENAME"
+}
+
 tmp="$(mktemp -d)"
 trap cleanup EXIT
 
@@ -67,7 +77,25 @@ grep -v '^#' "$SCRIPTDIR/packages.list" | grep -v '^$' \
 # Create /home directory for user creation at boot
 mkdir -p "$tmp"/home
 
+# ============================================================================
+# Overlayfs Integration
+# ============================================================================
+
+# Copy overlayfs mount script into /etc/init.d
+if [ -f "$SCRIPTDIR/overlayfs-init.sh" ]; then
+	makefile root:root 0755 "$tmp"/etc/init.d/overlayfs-init < "$SCRIPTDIR/overlayfs-init.sh"
+fi
+
+# Create init wrapper for the initfs
+if [ -f "$SCRIPTDIR/init-overlay-wrapper.sh" ]; then
+	mkdir -p "$tmp"/lib/apk
+	makefile root:root 0755 "$tmp"/lib/apk/init-overlay-wrapper < "$SCRIPTDIR/init-overlay-wrapper.sh"
+fi
+
+# ============================================================================
 # Setup runlevels
+# ============================================================================
+
 rc_add devfs sysinit
 rc_add dmesg sysinit
 rc_add mdev sysinit
@@ -82,6 +110,9 @@ rc_add hostname boot
 rc_add bootmisc boot
 rc_add syslog boot
 rc_add local default
+
+# Overlayfs check at boot (early, before other services)
+rc_add overlayfs-init boot
 
 rc_add dbus default
 rc_add networkmanager default

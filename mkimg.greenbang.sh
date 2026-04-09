@@ -16,6 +16,14 @@ section_kernels() {
 	done
 }
 
+
+# Boot parameters for overlayfs control:
+# overlayfs=on   - Force overlayfs boot (fail if unavailable)
+# overlayfs=off  - Force traditional RAM boot
+# overlayfs=auto - Try overlayfs, fall back if needed (default)
+# Example in GRUB: linux /boot/vmlinuz-... root=/dev/sr0 overlayfs=on
+# These parameters are processed by /etc/local.d/overlayfs.start during boot
+
 profile_greenbang() {
 	title="GreenBang"
 	desc="Alpine Linux with labwc Wayland desktop"
