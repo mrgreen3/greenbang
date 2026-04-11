@@ -49,7 +49,7 @@ echo "$HOSTNAME" > "$tmp"/etc/hostname
 
 # Create os-release file with version
 mkdir -p "$tmp"/etc
-cat > "$tmp"/etc/os-release <<EOF
+cat > "$tmp"/etc/os-release <<EOF2
 NAME="GreenBang"
 ID=greenbang
 ID_LIKE=alpine
@@ -60,14 +60,14 @@ DOCUMENTATION_URL="https://greenbang.org"
 SUPPORT_URL="https://github.com/mrgreen3/greenbang"
 BUG_REPORT_URL="https://github.com/mrgreen3/greenbang/issues"
 PLATFORM_ID="linux"
-EOF
+EOF2
 
 # Create network config (loopback only — NetworkManager handles everything else)
 mkdir -p "$tmp"/etc/network
-cat > "$tmp"/etc/network/interfaces <<EOF
+cat > "$tmp"/etc/network/interfaces <<EOF2
 auto lo
 iface lo inet loopback
-EOF
+EOF2
 
 # Create package list from packages.list
 mkdir -p "$tmp"/etc/apk
@@ -76,21 +76,6 @@ grep -v '^#' "$SCRIPTDIR/packages.list" | grep -v '^$' \
 
 # Create /home directory for user creation at boot
 mkdir -p "$tmp"/home
-
-# ============================================================================
-# Overlayfs Integration
-# ============================================================================
-
-# Copy overlayfs mount script into /etc/init.d
-if [ -f "$SCRIPTDIR/overlayfs-init.sh" ]; then
-	makefile root:root 0755 "$tmp"/etc/init.d/overlayfs-init < "$SCRIPTDIR/overlayfs-init.sh"
-fi
-
-# Create init wrapper for the initfs
-if [ -f "$SCRIPTDIR/init-overlay-wrapper.sh" ]; then
-	mkdir -p "$tmp"/lib/apk
-	makefile root:root 0755 "$tmp"/lib/apk/init-overlay-wrapper < "$SCRIPTDIR/init-overlay-wrapper.sh"
-fi
 
 # ============================================================================
 # Setup runlevels
@@ -111,9 +96,6 @@ rc_add bootmisc boot
 rc_add syslog boot
 rc_add local default
 
-# Overlayfs check at boot (early, before other services)
-rc_add overlayfs-init boot
-
 rc_add dbus default
 rc_add networkmanager default
 rc_add seatd default
@@ -126,4 +108,6 @@ rc_add savecache shutdown
 chmod 755 "$tmp"
 
 # Generate apkovl
+# Remove /lib/modules since modloop already has it
+rm -rf "$tmp/lib/modules"
 tar -c -C "$tmp" . | gzip -9n > $HOSTNAME.apkovl.tar.gz

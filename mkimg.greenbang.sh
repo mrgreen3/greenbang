@@ -44,5 +44,5 @@ profile_greenbang() {
 	apks="$apks $_pkglist"
 
 	# Override boot parameters with overlay module and overlaytmpfs
-	initfs_cmdline="modules=loop,squashfs,sd-mod,usb-storage,overlay quiet overlaytmpfs=yes"
+	initfs_cmdline="modules=loop,squashfs,sd-mod,usb-storage,overlay quiet "
 }

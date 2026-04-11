@@ -89,8 +89,8 @@ sh mkimage.sh \
     --workdir "$WORKDIR" \
     --arch x86_64 \
     --profile greenbang \
-    --repository https://mirrors.ircam.fr/pub/alpine/v3.23/main \
-    --repository https://mirrors.ircam.fr/pub/alpine/v3.23/community
+    --repository https://dl-cdn.alpinelinux.org/alpine/v3.23/main \
+    --repository https://dl-cdn.alpinelinux.org/alpine/v3.23/community
 
 # Find and display output ISO
 ISO_PATH=$(ls "$OUTDIR"/greenbang-${VERSION}-x86_64.iso 2>/dev/null | head -1)

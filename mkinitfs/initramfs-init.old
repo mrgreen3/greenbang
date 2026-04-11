@@ -873,28 +873,33 @@ if [ -n "$KOPT_rootflags" ]; then
 fi
 
 
-# Overlay setup for diskless/live boot (automatic, no boot parameter needed)
+# Try overlayfs mount for diskless/live boot when KOPT_overlaytmpfs enabled
 overlay_mounted=0
-if [ -z "$KOPT_root" ] && grep -q "^overlay" /proc/filesystems 2>/dev/null; then
-	# Try to find the squashfs mount under /media
-	iso_lower=""
-	for dir in /media/*; do
-		if [ -d "$dir" ] && [ -f "$dir/boot/vmlinuz-lts" ]; then
-			iso_lower="$dir"
-			break
-		fi
-	done
-
-	if [ -n "$iso_lower" ]; then
-		# Create overlay work directories in tmpfs
+if [ -z "$KOPT_root" ] && [ "$KOPT_overlaytmpfs" = "yes" ] && grep -q "^overlay" /proc/modules 2>/dev/null; then
+	ebegin "Setting up diskless overlayfs root"
+	# Use /media/cdrom where Alpine mounts the ISO
+	overlay_lower="/media/cdrom"
+	
+	# Verify it exists and has the kernel
+	if [ ! -d "$overlay_lower" ] || [ ! -e "$overlay_lower/boot/vmlinuz-lts" ]; then
+		overlay_lower=""
+	fi
+	
+	if [ -n "$overlay_lower" ]; then
+		# Create overlay work directories
 		$MOCK mkdir -p /tmp/.overlay/upper /tmp/.overlay/work 2>/dev/null || true
-
-		# Try to mount overlayfs with ISO as lower layer, tmpfs as upper
+		
+		# Mount overlayfs with ISO as lower layer, tmpfs as upper
 		if $MOCK mount -t overlay \
-			-o lowerdir="$iso_lower",upperdir=/tmp/.overlay/upper,workdir=/tmp/.overlay/work \
+			-o lowerdir="$overlay_lower",upperdir=/tmp/.overlay/upper,workdir=/tmp/.overlay/work,redirect_dir=on \
 			overlay "$sysroot" 2>/dev/null; then
+			eend 0
 			overlay_mounted=1
+		else
+			eend 1
 		fi
+	else
+		eend 1
 	fi
 fi
 
@@ -902,6 +907,7 @@ fi
 if [ "$overlay_mounted" = "0" ]; then
 	$MOCK mount -t tmpfs -o $rootflags tmpfs $sysroot
 fi
+
 if [ "$KOPT_bootstrap_usr_merged" = "yes" ]; then
 	$MOCK mkdir -p "$sysroot"/usr/lib "$sysroot"/usr/bin "$sysroot"/usr/sbin
 	$MOCK ln -s usr/bin usr/sbin usr/lib "$sysroot"/

@@ -873,35 +873,7 @@ if [ -n "$KOPT_rootflags" ]; then
 fi
 
 
-# Overlay setup for diskless/live boot (automatic, no boot parameter needed)
-overlay_mounted=0
-if [ -z "$KOPT_root" ] && grep -q "^overlay" /proc/filesystems 2>/dev/null; then
-	# Try to find the squashfs mount under /media
-	iso_lower=""
-	for dir in /media/*; do
-		if [ -d "$dir" ] && [ -f "$dir/boot/vmlinuz-lts" ]; then
-			iso_lower="$dir"
-			break
-		fi
-	done
-
-	if [ -n "$iso_lower" ]; then
-		# Create overlay work directories in tmpfs
-		$MOCK mkdir -p /tmp/.overlay/upper /tmp/.overlay/work 2>/dev/null || true
-
-		# Try to mount overlayfs with ISO as lower layer, tmpfs as upper
-		if $MOCK mount -t overlay \
-			-o lowerdir="$iso_lower",upperdir=/tmp/.overlay/upper,workdir=/tmp/.overlay/work \
-			overlay "$sysroot" 2>/dev/null; then
-			overlay_mounted=1
-		fi
-	fi
-fi
-
-# Fallback to tmpfs if overlay was not used or failed
-if [ "$overlay_mounted" = "0" ]; then
-	$MOCK mount -t tmpfs -o $rootflags tmpfs $sysroot
-fi
+$MOCK mount -t tmpfs -o $rootflags tmpfs $sysroot
 if [ "$KOPT_bootstrap_usr_merged" = "yes" ]; then
 	$MOCK mkdir -p "$sysroot"/usr/lib "$sysroot"/usr/bin "$sysroot"/usr/sbin
 	$MOCK ln -s usr/bin usr/sbin usr/lib "$sysroot"/
