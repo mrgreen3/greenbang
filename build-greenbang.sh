@@ -5,7 +5,7 @@ set -e
 # Properly handles apkovl-files directory for live user and configs
 
 PROJECTDIR="$(cd "$(dirname "$0")" && pwd)"
-WORKDIR="/tmp/greenbang-work-$$"
+WORKDIR="/var/tmp/greenbang-work-$$"
 OUTDIR="$HOME/iso"
 VERSION="${VERSION:-0.1.3}"
 APORTS_SCRIPTS="${APORTS_SCRIPTS:-$HOME/aports/scripts}"
@@ -19,13 +19,15 @@ echo "Work dir: $WORKDIR"
 echo "Output: $OUTDIR"
 echo "Version: $VERSION"
 
-# Cleanup function to restore original initramfs-init
+# Cleanup function - restores initramfs-init and removes workdir (needs doas for rootfs)
 cleanup() {
     if [ -f "$MKINITFS_ORIG" ]; then
         echo "Restoring original initramfs-init..."
         doas cp "$MKINITFS_ORIG" "$MKINITFS_FILE" 2>/dev/null || true
-        rm -f "$MKINITFS_ORIG"
+        doas rm -f "$MKINITFS_ORIG" 2>/dev/null || true
     fi
+    doas umount "$WORKDIR/iso-mnt" 2>/dev/null || true
+    doas rm -rf "$WORKDIR" 2>/dev/null || true
 }
 trap cleanup EXIT
 
@@ -128,16 +130,38 @@ doas apk add \
 
 echo "✓ Packages installed to rootfs"
 
+# Apply apkovl to rootfs: bakes hostname, runlevels, and setup scripts into squashfs lower layer.
+# This ensures OpenRC finds runlevel symlinks and hostname is correct at boot,
+# independent of overlay-merging behaviour at runtime.
+echo "Applying apkovl configuration to rootfs..."
+APKOVL_FILE=$(find "$ISO_MNT" -name "*.apkovl.tar.gz" 2>/dev/null | head -1)
+if [ -n "$APKOVL_FILE" ]; then
+    doas tar -xzf "$APKOVL_FILE" -C "$ROOTFS_DIR" 2>/dev/null || true
+    doas chmod 755 "$ROOTFS_DIR/etc/local.d/greenbang-setup.start" 2>/dev/null || true
+    echo "✓ apkovl baked into rootfs (hostname, runlevels, setup scripts)"
+else
+    echo "WARNING: No apkovl found in ISO - runlevels will be empty in squashfs"
+fi
+
 # Unmount ISO
 doas umount "$ISO_MNT"
 
-# Create squashfs
+# Ensure essential mount-point directories exist as empty stubs in the squashfs.
+# The -e flag on mksquashfs removes entire directories, leaving no /run mountpoint.
+# Without /run, OpenRC cannot initialize at boot.
+echo "Creating empty mount point stubs in rootfs..."
+for dir in proc sys dev run tmp; do
+    doas rm -rf "$ROOTFS_DIR/$dir"
+    doas mkdir -p "$ROOTFS_DIR/$dir"
+done
+echo "✓ Mount point stubs created (proc sys dev run tmp)"
+
+# Create squashfs — no -e exclusions so empty stub dirs are included as mount points
 echo "Creating squashfs (xz compression)..."
 doas mksquashfs "$ROOTFS_DIR" "$SQUASHFS_PATH" \
     -comp xz \
     -noappend \
-    -no-progress \
-    -e proc sys dev run tmp
+    -no-progress
 echo "✓ rootfs.squashfs: $(ls -lh "$SQUASHFS_PATH" | awk '{print $5}')"
 
 # Repack ISO with squashfs included
@@ -174,5 +198,4 @@ echo "Squashfs: $SQUASHFS_PATH ($(ls -lh "$SQUASHFS_PATH" | awk '{print $5}'))"
 echo ""
 echo "To test: qemu-system-x86_64 -cdrom $FINAL_ISO -m 2g -enable-kvm -vga virtio"
 
-# Cleanup work directory
-rm -rf "$WORKDIR"
+# Workdir is cleaned by the trap on EXIT
