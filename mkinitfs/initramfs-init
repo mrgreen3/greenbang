@@ -873,32 +873,31 @@ if [ -n "$KOPT_rootflags" ]; then
 fi
 
 
-# Overlay setup for diskless/live boot (automatic, no boot parameter needed)
+# Overlay setup for squashfs-based live boot
+# Mounts rootfs.squashfs from ISO as overlay lower layer (saves RAM)
 overlay_mounted=0
-if [ -z "$KOPT_root" ] && grep -q "^overlay" /proc/filesystems 2>/dev/null; then
-	# Try to find the squashfs mount under /media
-	iso_lower=""
-	for dir in /media/*; do
-		if [ -d "$dir" ] && [ -f "$dir/boot/vmlinuz-lts" ]; then
-			iso_lower="$dir"
-			break
+modprobe overlay 2>/dev/null || true
+if grep -q "overlay" /proc/filesystems 2>/dev/null; then
+	squashfs_lower=""
+	squashfs_mount="/tmp/.squashfs-lower"
+	for iso_dir in /media/*; do
+		if [ -f "$iso_dir/rootfs.squashfs" ]; then
+			mkdir -p "$squashfs_mount"
+			if mount -t squashfs -o loop,ro "$iso_dir/rootfs.squashfs" "$squashfs_mount" 2>/dev/null; then
+				squashfs_lower="$squashfs_mount"
+				break
+			fi
 		fi
 	done
-
-	if [ -n "$iso_lower" ]; then
-		# Create overlay work directories in tmpfs
-		$MOCK mkdir -p /tmp/.overlay/upper /tmp/.overlay/work 2>/dev/null || true
-
-		# Try to mount overlayfs with ISO as lower layer, tmpfs as upper
-		if $MOCK mount -t overlay \
-			-o lowerdir="$iso_lower",upperdir=/tmp/.overlay/upper,workdir=/tmp/.overlay/work \
-			overlay "$sysroot" 2>/dev/null; then
+	if [ -n "$squashfs_lower" ]; then
+		mkdir -p /tmp/.overlay/upper /tmp/.overlay/work
+		if mount -t overlay -o lowerdir="$squashfs_lower",upperdir=/tmp/.overlay/upper,workdir=/tmp/.overlay/work overlay "$sysroot" 2>/dev/null; then
 			overlay_mounted=1
 		fi
 	fi
 fi
 
-# Fallback to tmpfs if overlay was not used or failed
+# Fallback to tmpfs if overlay not mounted
 if [ "$overlay_mounted" = "0" ]; then
 	$MOCK mount -t tmpfs -o $rootflags tmpfs $sysroot
 fi

@@ -92,22 +92,87 @@ sh mkimage.sh \
     --repository https://dl-cdn.alpinelinux.org/alpine/v3.23/main \
     --repository https://dl-cdn.alpinelinux.org/alpine/v3.23/community
 
-# Find and display output ISO
+# Find base ISO
 ISO_PATH=$(ls "$OUTDIR"/greenbang-${VERSION}-x86_64.iso 2>/dev/null | head -1)
-if [ -n "$ISO_PATH" ]; then
-    echo ""
-    echo "✓ Build successful!"
-    echo "✓ ISO: $ISO_PATH"
-    ls -lh "$ISO_PATH"
-    echo ""
-    echo "✓ Overlayfs support enabled!"
-    echo "✓ Live user and packages configured"
-    echo ""
-    echo "To test: qemu-system-x86_64 -cdrom $ISO_PATH -m 512m -enable-kvm"
-else
+if [ -z "$ISO_PATH" ]; then
     echo "✗ ISO not found in $OUTDIR"
     exit 1
 fi
+echo ""
+echo "✓ Base ISO built: $ISO_PATH ($(ls -lh "$ISO_PATH" | awk '{print $5}'))"
+
+# Build rootfs.squashfs and inject into ISO
+SQUASHFS_PATH="$OUTDIR/greenbang-${VERSION}-rootfs.squashfs"
+ISO_REPACK_DIR="$WORKDIR/iso-repack"
+ROOTFS_DIR="$WORKDIR/rootfs"
+
+echo ""
+echo "=== Building rootfs.squashfs ==="
+
+# Mount the base ISO to access the APK cache
+ISO_MNT="$WORKDIR/iso-mnt"
+mkdir -p "$ISO_MNT"
+doas mount -t iso9660 -o loop,ro "$ISO_PATH" "$ISO_MNT"
+
+# Install packages into rootfs using the ISO's APK cache
+mkdir -p "$ROOTFS_DIR"
+echo "Installing packages to rootfs (using ISO APK cache)..."
+doas apk add \
+    --root "$ROOTFS_DIR" \
+    --initdb \
+    --no-progress \
+    --repository "$ISO_MNT/apks" \
+    --allow-untrusted \
+    alpine-base \
+    $(grep -v '^#' "$PROJECTDIR/packages.list" | grep -v '^$' | tr '\n' ' ')
+
+echo "✓ Packages installed to rootfs"
+
+# Unmount ISO
+doas umount "$ISO_MNT"
+
+# Create squashfs
+echo "Creating squashfs (xz compression)..."
+doas mksquashfs "$ROOTFS_DIR" "$SQUASHFS_PATH" \
+    -comp xz \
+    -noappend \
+    -no-progress \
+    -e proc sys dev run tmp
+echo "✓ rootfs.squashfs: $(ls -lh "$SQUASHFS_PATH" | awk '{print $5}')"
+
+# Repack ISO with squashfs included
+echo ""
+echo "=== Repacking ISO with rootfs.squashfs ==="
+mkdir -p "$ISO_REPACK_DIR"
+doas mount -t iso9660 -o loop,ro "$ISO_PATH" "$ISO_MNT"
+cp -a "$ISO_MNT/." "$ISO_REPACK_DIR/"
+doas umount "$ISO_MNT"
+doas chmod -R u+w "$ISO_REPACK_DIR"
+
+cp "$SQUASHFS_PATH" "$ISO_REPACK_DIR/rootfs.squashfs"
+echo "✓ rootfs.squashfs added to ISO contents"
+
+FINAL_ISO="$OUTDIR/greenbang-${VERSION}-x86_64.iso"
+xorriso -as mkisofs \
+    -o "$FINAL_ISO" \
+    -isohybrid-mbr /usr/share/syslinux/isohdpfx.bin \
+    -c boot/syslinux/boot.cat \
+    -b boot/syslinux/isolinux.bin \
+    -no-emul-boot \
+    -boot-load-size 4 \
+    -boot-info-table \
+    -eltorito-alt-boot \
+    -e boot/grub/efi.img \
+    -no-emul-boot \
+    -isohybrid-gpt-basdat \
+    "$ISO_REPACK_DIR" 2>&1 | grep -v "^xorriso" | tail -5
+
+echo ""
+echo "=== Build Complete ==="
+echo "ISO:     $FINAL_ISO ($(ls -lh "$FINAL_ISO" | awk '{print $5}'))"
+echo "Squashfs: $SQUASHFS_PATH ($(ls -lh "$SQUASHFS_PATH" | awk '{print $5}'))"
+echo ""
+echo "To test: qemu-system-x86_64 -cdrom $FINAL_ISO -m 2g -enable-kvm -vga virtio"
 
 # Cleanup work directory
 rm -rf "$WORKDIR"
