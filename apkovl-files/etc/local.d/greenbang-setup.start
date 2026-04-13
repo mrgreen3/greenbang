@@ -23,11 +23,8 @@ mkdir -p /home/live
 chown 1000:1000 /home/live
 chmod 755 /home/live
 
-# Setup udev for device management
-setup-devd udev
 
 # Create runtime directory — /run is tmpfs, must be done every boot
-# Runs after setup-devd so udev init can't overwrite it
 mkdir -p /run/user/1000
 chown 1000:1000 /run/user/1000
 chmod 700 /run/user/1000

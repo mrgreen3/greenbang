@@ -83,7 +83,9 @@ mkdir -p "$tmp"/home
 
 rc_add devfs sysinit
 rc_add dmesg sysinit
-rc_add mdev sysinit
+rc_add udev sysinit
+rc_add udev-trigger sysinit
+rc_add udev-settle sysinit
 rc_add hwdrivers sysinit
 rc_add modloop sysinit
 rc_add modloop sysinit
