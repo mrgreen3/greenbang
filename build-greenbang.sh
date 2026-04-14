@@ -7,7 +7,7 @@ set -e
 PROJECTDIR="$(cd "$(dirname "$0")" && pwd)"
 WORKDIR="/var/tmp/greenbang-work-$$"
 OUTDIR="$HOME/iso"
-VERSION="${VERSION:-0.1.3}"
+VERSION="${VERSION:-0.1.4-beta}"
 APORTS_SCRIPTS="${APORTS_SCRIPTS:-$HOME/aports/scripts}"
 MKINITFS_ORIG="/tmp/initramfs-init.backup.$$"
 MKINITFS_FILE="/usr/share/mkinitfs/initramfs-init"
@@ -160,6 +160,8 @@ echo "✓ Mount point stubs created (proc sys dev run tmp)"
 echo "Creating squashfs (xz compression)..."
 doas mksquashfs "$ROOTFS_DIR" "$SQUASHFS_PATH" \
     -comp xz \
+    -b 1048576 \
+    -Xdict-size 100% \
     -noappend \
     -no-progress
 echo "✓ rootfs.squashfs: $(ls -lh "$SQUASHFS_PATH" | awk '{print $5}')"
@@ -172,6 +174,8 @@ doas mount -t iso9660 -o loop,ro "$ISO_PATH" "$ISO_MNT"
 cp -a "$ISO_MNT/." "$ISO_REPACK_DIR/"
 doas umount "$ISO_MNT"
 doas chmod -R u+w "$ISO_REPACK_DIR"
+rm -rf "$ISO_REPACK_DIR/apks"
+echo "✓ APK cache removed (redundant — packages baked into squashfs)"
 
 cp "$SQUASHFS_PATH" "$ISO_REPACK_DIR/rootfs.squashfs"
 echo "✓ rootfs.squashfs added to ISO contents"

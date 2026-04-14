@@ -9,6 +9,9 @@ grub-efi
 # Wayland compositor
 labwc
 
+# Input
+libinput
+
 # Seat management
 seatd
 seatd-openrc
