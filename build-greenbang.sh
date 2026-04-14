@@ -7,7 +7,7 @@ set -e
 PROJECTDIR="$(cd "$(dirname "$0")" && pwd)"
 WORKDIR="/var/tmp/greenbang-work-$$"
 OUTDIR="$HOME/iso"
-VERSION="${VERSION:-0.1.5}"
+VERSION="${VERSION:-0.1.6}"
 APORTS_SCRIPTS="${APORTS_SCRIPTS:-$HOME/aports/scripts}"
 MKINITFS_ORIG="/tmp/initramfs-init.backup.$$"
 MKINITFS_FILE="/usr/share/mkinitfs/initramfs-init"
