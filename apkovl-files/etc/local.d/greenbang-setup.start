@@ -34,4 +34,8 @@ mkdir -p /run/user/1000/pulse
 chown 1000:1000 /run/user/1000/pulse
 chmod 700 /run/user/1000/pulse
 
+# Create writable APK cache and symlink for live session
+mkdir -p /var/cache/apk
+ln -sf /var/cache/apk /etc/apk/cache
+
 exit 0
