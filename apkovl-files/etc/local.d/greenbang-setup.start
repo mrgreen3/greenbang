@@ -38,11 +38,5 @@ chmod 700 /run/user/1000/pulse
 mkdir -p /var/cache/apk
 ln -sf /var/cache/apk /etc/apk/cache
 
-# Register PipeWire as user services for the gui runlevel
-# Run as live user so rc-update -U writes to ~/.config/openrc
-# PAM is absent from this image; rtkit handles realtime scheduling
-su -s /bin/sh -l live -c "rc-update -U add pipewire gui"
-su -s /bin/sh -l live -c "rc-update -U add wireplumber gui"
-su -s /bin/sh -l live -c "rc-update -U add pipewire-pulse gui"
 
 exit 0
