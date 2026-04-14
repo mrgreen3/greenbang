@@ -9,8 +9,10 @@ doas rc-service networkmanager restart &
 # Update D-Bus environment for Wayland session
 dbus-update-activation-environment DISPLAY WAYLAND_DISPLAY XDG_CURRENT_DESKTOP &
 
-# Start user-level OpenRC gui runlevel (PipeWire, WirePlumber, pipewire-pulse)
-openrc-user gui &
+# Start PipeWire audio stack
+pipewire &
+wireplumber &
+pipewire-pulse &
 
 # Set wallpaper
 swaybg -i $HOME/Backgrounds/seafront.jpg -m fill &
