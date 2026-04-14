@@ -82,8 +82,6 @@ alsa-utils
 rtkit
 rtkit-openrc
 
-# User-level OpenRC services
-openrc-user
 
 # Networking
 networkmanager
