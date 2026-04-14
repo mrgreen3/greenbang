@@ -69,11 +69,21 @@ conky
 
 # Audio
 pipewire
+pipewire-openrc
 pipewire-pulse
+pipewire-pulse-openrc
 pipewire-alsa
 pipewire-jack
 wireplumber
+wireplumber-openrc
 alsa-utils
+
+# Realtime scheduling (PAM not present — rtkit used instead)
+rtkit
+rtkit-openrc
+
+# User-level OpenRC services
+openrc-user
 
 # Networking
 networkmanager
