@@ -82,6 +82,9 @@ alsa-utils
 rtkit
 rtkit-openrc
 
+# User-level OpenRC (required for rc-update -U / openrc-user gui)
+openrc-user
+
 
 # Networking
 networkmanager

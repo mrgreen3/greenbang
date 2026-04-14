@@ -13,6 +13,7 @@ if ! id live >/dev/null 2>&1; then
 	addgroup live tty
 	addgroup live audio
 	addgroup live rtkit
+	addgroup live pipewire
 	addgroup live seat
 	addgroup live plugdev
 fi
@@ -38,5 +39,12 @@ chmod 700 /run/user/1000/pulse
 mkdir -p /var/cache/apk
 ln -sf /var/cache/apk /etc/apk/cache
 
+
+# Register PipeWire stack as user services for the Wayland gui runlevel
+# pipewire group is created by pipewire post-install; rtkit handles realtime scheduling
+# Run as live user so rc-update -U writes to ~/.config/openrc/runlevels/gui/
+su -s /bin/sh -l live -c "rc-update -U add pipewire gui"
+su -s /bin/sh -l live -c "rc-update -U add wireplumber gui"
+su -s /bin/sh -l live -c "rc-update -U add pipewire-pulse gui"
 
 exit 0
