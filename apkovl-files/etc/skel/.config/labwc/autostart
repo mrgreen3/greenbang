@@ -9,11 +9,10 @@ doas rc-service networkmanager restart &
 # Update D-Bus environment for Wayland session
 dbus-update-activation-environment DISPLAY WAYLAND_DISPLAY XDG_CURRENT_DESKTOP &
 
-# Start PipeWire audio daemon as user service
-rc-service -U pipewire start &
-
-# Start WirePlumber session manager
-rc-service -U wireplumber start &
+# Start PipeWire audio stack (after desktop initialises)
+sleep 2 && pipewire &
+sleep 2 && wireplumber &
+sleep 2 && pipewire-pulse &
 
 # Set wallpaper
 swaybg -i $HOME/Backgrounds/seafront.jpg -m fill &

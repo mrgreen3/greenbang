@@ -69,8 +69,11 @@ conky
 
 # Audio
 pipewire
-wireplumber
+pipewire-pulse
 pipewire-alsa
+pipewire-jack
+wireplumber
+alsa-utils
 
 # Networking
 networkmanager
