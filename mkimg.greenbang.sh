@@ -27,7 +27,7 @@ profile_greenbang() {
 	apkovl="genapkovl-greenbang.sh"
 	hostname="greenbang"
 	
-	local _version="${GB_VERSION:-0.1.7-beta}"
+	local _version="${GB_VERSION:-0.1.8-beta}"
 	image_name="greenbang-${_version}"
 	output_filename="greenbang-${_version}-x86_64.iso"
 
