@@ -7,7 +7,8 @@ set -e
 PROJECTDIR="$(cd "$(dirname "$0")" && pwd)"
 WORKDIR="/var/tmp/greenbang-work-$$"
 OUTDIR="$HOME/iso"
-VERSION="${VERSION:-0.1.6}"
+VERSION="${VERSION:-0.1.7-beta}"
+TAG="${TAG:-v3.23}"
 APORTS_SCRIPTS="${APORTS_SCRIPTS:-$HOME/aports/scripts}"
 MKINITFS_ORIG="/tmp/initramfs-init.backup.$$"
 MKINITFS_FILE="/usr/share/mkinitfs/initramfs-init"
@@ -86,7 +87,7 @@ echo ""
 echo "Running mkimage.sh..."
 export GB_VERSION="$VERSION"
 sh mkimage.sh \
-    --tag v3.23 \
+    --tag "$TAG" \
     --outdir "$OUTDIR" \
     --workdir "$WORKDIR" \
     --arch x86_64 \
@@ -193,6 +194,7 @@ xorriso -as mkisofs \
     -e boot/grub/efi.img \
     -no-emul-boot \
     -isohybrid-gpt-basdat \
+    -volid "alpine-GB $TAG x86_64" \
     "$ISO_REPACK_DIR" 2>&1 | grep -v "^xorriso" | tail -5
 
 echo ""
