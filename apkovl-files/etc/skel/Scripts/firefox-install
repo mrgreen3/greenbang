@@ -1,0 +1,13 @@
+#!/bin/sh
+command -v firefox >/dev/null 2>&1 && exec firefox
+
+ping -c 1 -W 3 8.8.8.8 >/dev/null 2>&1 || { notify-send "Firefox" "No network connection detected"; exit 1; }
+
+notify-send "Firefox" "Installing Firefox, please wait..."
+
+doas tee /etc/apk/repositories <<REPOS
+https://dl-cdn.alpinelinux.org/alpine/edge/main
+https://dl-cdn.alpinelinux.org/alpine/edge/community
+REPOS
+
+doas apk update -q && doas apk add firefox && notify-send "Firefox" "Firefox installed. Launch from menu." || notify-send "Firefox" "Install failed"

@@ -107,7 +107,7 @@
       <action name="Execute" command="foot"/>
     </keybind>
     <keybind key="W-w">
-      <action name="Execute" command="firefox"/>
+      <action name="Execute" command="$HOME/Scripts/firefox-install"/>
     </keybind>
     <keybind key="W-e">
       <action name="Execute" command="mousepad"/>
