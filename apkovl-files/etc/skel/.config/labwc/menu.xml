@@ -8,7 +8,7 @@
   </item>
 
   <item label="󰈹  Browser">
-    <action name="Execute" command="$HOME/Scripts/firefox-install"/>
+    <action name="Execute" command="firefox-install"/>
   </item>
 
   <item label="󰉋  Files">
