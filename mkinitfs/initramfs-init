@@ -873,34 +873,7 @@ if [ -n "$KOPT_rootflags" ]; then
 fi
 
 
-# Overlay setup for squashfs-based live boot
-# Mounts rootfs.squashfs from ISO as overlay lower layer (saves RAM)
-overlay_mounted=0
-modprobe overlay 2>/dev/null || true
-if grep -q "overlay" /proc/filesystems 2>/dev/null; then
-	squashfs_lower=""
-	squashfs_mount="/tmp/.squashfs-lower"
-	for iso_dir in /media/*; do
-		if [ -f "$iso_dir/rootfs.squashfs" ]; then
-			mkdir -p "$squashfs_mount"
-			if mount -t squashfs -o loop,ro "$iso_dir/rootfs.squashfs" "$squashfs_mount" 2>/dev/null; then
-				squashfs_lower="$squashfs_mount"
-				break
-			fi
-		fi
-	done
-	if [ -n "$squashfs_lower" ]; then
-		mkdir -p /tmp/.overlay/upper /tmp/.overlay/work
-		if mount -t overlay -o lowerdir="$squashfs_lower",upperdir=/tmp/.overlay/upper,workdir=/tmp/.overlay/work overlay "$sysroot" 2>/dev/null; then
-			overlay_mounted=1
-		fi
-	fi
-fi
-
-# Fallback to tmpfs if overlay not mounted
-if [ "$overlay_mounted" = "0" ]; then
-	$MOCK mount -t tmpfs -o $rootflags tmpfs $sysroot
-fi
+$MOCK mount -t tmpfs -o $rootflags tmpfs $sysroot
 if [ "$KOPT_bootstrap_usr_merged" = "yes" ]; then
 	$MOCK mkdir -p "$sysroot"/usr/lib "$sysroot"/usr/bin "$sysroot"/usr/sbin
 	$MOCK ln -s usr/bin usr/sbin usr/lib "$sysroot"/

@@ -27,7 +27,7 @@ profile_greenbang() {
 	apkovl="genapkovl-greenbang.sh"
 	hostname="greenbang"
 	
-	local _version="${GB_VERSION:-0.1.8-beta}"
+	local _version="${GB_VERSION:-0.1.9-beta}"
 	image_name="greenbang-${_version}"
 	output_filename="greenbang-${_version}-x86_64.iso"
 
@@ -43,6 +43,6 @@ profile_greenbang() {
 	_pkglist="$(grep -v '^#' "$SCRIPTDIR/packages.list" | grep -v '^$' | tr '\n' ' ')"
 	apks="$apks $_pkglist"
 
-	# Override boot parameters with overlay module and overlaytmpfs
-	initfs_cmdline="modules=loop,squashfs,sd-mod,usb-storage,overlay quiet "
+	# Override boot parameters
+	initfs_cmdline="modules=loop,squashfs,sd-mod,usb-storage quiet "
 }
