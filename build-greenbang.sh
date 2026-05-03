@@ -5,7 +5,7 @@ PROJECTDIR="$(cd "$(dirname "$0")" && pwd)"
 WORKDIR="/var/tmp/greenbang-work-$$"
 OUTDIR="$HOME/iso"
 VERSION="${GB_VERSION:-0.1.9-beta}"
-TAG="${TAG:-v3.23}"
+TAG="${TAG:-edge}"
 APORTS_SCRIPTS="${APORTS_SCRIPTS:-$HOME/aports/scripts}"
 MKINITFS_FILE="/usr/share/mkinitfs/initramfs-init"
 MKINITFS_BACKUP="/tmp/initramfs-init.backup.$$"
@@ -41,7 +41,7 @@ doas cp "$PROJECTDIR/mkinitfs/initramfs-init" "$MKINITFS_FILE"
 cd "$APORTS_SCRIPTS"
 
 export GB_VERSION="$VERSION"
-sh mkimage.sh     --tag "$TAG"     --outdir "$OUTDIR"     --workdir "$WORKDIR"     --arch x86_64     --profile greenbang     --repository https://dl-cdn.alpinelinux.org/alpine/v3.23/main     --repository https://dl-cdn.alpinelinux.org/alpine/v3.23/community
+sh mkimage.sh     --tag "$TAG"     --outdir "$OUTDIR"     --workdir "$WORKDIR"     --arch x86_64     --profile greenbang     --repository https://dl-cdn.alpinelinux.org/alpine/edge/main     --repository https://dl-cdn.alpinelinux.org/alpine/edge/community
 
 ISO="$OUTDIR/greenbang-${VERSION}-x86_64.iso"
 if [ -f "$ISO" ]; then

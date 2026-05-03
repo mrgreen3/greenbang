@@ -25,8 +25,8 @@ case "$choice" in
 esac
 
 doas tee /etc/apk/repositories <<EOF
-$MIRROR/v3.23/main
-$MIRROR/v3.23/community
+$MIRROR/edge/main
+$MIRROR/edge/community
 EOF
 
 doas apk update && echo "Done. Repositories configured." || echo "Update failed — check mirror availability."
