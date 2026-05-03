@@ -15,7 +15,7 @@ wireplumber &
 pipewire-pulse &
 
 # Set wallpaper
-swaybg -i $HOME/Backgrounds/seafront.jpg -m fill &
+swaybg -i $HOME/Backgrounds/beach.jpg -m fill &
 
 # Start waybar
 waybar &
